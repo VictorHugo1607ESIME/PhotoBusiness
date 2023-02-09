@@ -146,22 +146,7 @@
             />
           </a>
         </div>
-      </article>
-
-      <article id="3697" class="location-listing">
-        <a class="location-title" href="#">Celebridades en el Homenaje a Silvia Pinal, como La Mujer Del Siglo </a>
-
-        <div class="location-image">
-          <a href="#">
-            <img
-              style="height: 250px !important; width: auto !important"
-              src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM56195793_-960x1440.jpg"
-              alt="Celebridades en el Homenaje a Silvia Pinal, como La Mujer Del Siglo"
-            />
-          </a>
-        </div>
-      </article>
-      
+      </article>     
 
       <article id="3700" class="location-listing">
         <a class="location-title" href="#">
