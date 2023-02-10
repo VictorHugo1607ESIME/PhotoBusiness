@@ -1,4 +1,4 @@
-<nav class="col-12 navbar row d-flex justify-content-between">
+<nav class="col-12 navbar row d-flex justify-content-between mb-4">
     <div class="col-sm-10 col-md-3 d-flex justify-content-start">
         <img class="col-sm-12 col-md-8" src="{{ asset('images/logo-entrefam.jpeg') }}">
     </div>

@@ -63,13 +63,17 @@
         filter: blur(2px);
       }
     }
+    .titleSection{
+        font-size:50px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
   </style>
 <div class="child-page-listing">
-    <div class="col-12 text-center">
-        <h3>Las mejores fotos de los espectáculos</h3>
+    <div class="col-12 mt-4 mb-4">
+        <h3 class="titleSection">Las mejores fotos de los espectáculos</h3>
     </div>
     <div class="grid-container">
-        
+
       <article id="3685" class="location-listing">
         <a class="location-title" href="#">
           Laura Flores, Ángela Carrasco, Alicia Villarreal, Dulce
@@ -146,7 +150,7 @@
             />
           </a>
         </div>
-      </article>     
+      </article>
 
       <article id="3700" class="location-listing">
         <a class="location-title" href="#">

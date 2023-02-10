@@ -10,7 +10,7 @@
         a {text-decoration: none;}
     </style>
 </head>
-<body style="padding: 1% 5% 0% 5%; ">
+<body style="padding: 1% 7% 0% 7%; ">
 
     @include('partials.nav')
     @yield('content')
