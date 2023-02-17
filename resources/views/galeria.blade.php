@@ -1,219 +1,112 @@
 <style>
-    body {
-      padding: 20px;
-      font-family: sans-serif;
-      background: #f2f2f2;
-    }
-    img {
-      width: 100%; /* need to overwrite inline dimensions */
-      height: auto;
-    }
-    h2 {
-      margin-bottom: 0.5em;
-    }
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      grid-gap: 1em;
-    }
-    /* hover styles */
-    .location-listing {
-      position: relative;
-    }
-    .location-image {
-      line-height: 0;
-      overflow: hidden;
-    }
-    .location-image img {
-      filter: blur(0px);
-      transition: filter 0.3s ease-in;
-      transform: scale(1.1);
-    }
-    .location-title {
-      font-size: 1.5em;
-      font-weight: bold;
-      text-decoration: none;
-      z-index: 1;
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      transition: opacity 0.5s;
-      background: rgba(90, 0, 10, 0.4);
-      color: white;
-      /* position the text in t’ middle*/
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .location-listing:hover .location-title {
-      opacity: 1;
-    }
-    .location-listing:hover .location-image img {
-      filter: blur(2px);
-    }
-    /* for touch screen devices */
-    @media (hover: none) {
-      .location-title {
-        opacity: 1;
-      }
-      .location-image img {
-        filter: blur(2px);
-      }
-    }
     .titleSection{
         font-size:50px;
         font-family: Arial, Helvetica, sans-serif;
     }
-  </style>
+
+</style>
 <div class="child-page-listing">
     <div class="col-12 mt-4 mb-4">
         <h3 class="titleSection">Las mejores fotos de los espectáculos</h3>
     </div>
-    <div class="grid-container">
+    <div class="row">
 
-      <article id="3685" class="location-listing">
-        <a class="location-title" href="#">
-          Laura Flores, Ángela Carrasco, Alicia Villarreal, Dulce
-        </a>
-        <div class="location-image">
-          <a href="#">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2023/01/ENTREFAM48555029_-960x640.jpg"
-              alt="Laura Flores, Ángela Carrasco, Alicia Villarreal, Dulce"
-            />
-          </a>
-        </div>
-      </article>
-
-      <article id="3688" class="location-listing">
-        <a class="location-title" href="#">CLAUDIA MARTÍN, NICOLE CURIEL, CATHERINE SIACHOQUE, JEDET, BARB</a>
-
-        <div class="location-image">
-          <a href="#">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2022/11/ENTREFAM14071581_-1-960x640.jpg"
-              alt="CLAUDIA MARTÍN, NICOLE CURIEL, CATHERINE SIACHOQUE, JEDET, BARB"
-            />
-          </a>
-        </div>
-      </article>
-      <article id="3688" class="location-listing">
-        <a class="location-title" href="#"> Danna Paola </a>
-
-        <div class="location-image">
-          <a href="#">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2023/01/AMC48164990_-960x640.jpg"
-              alt="Danna Paola"
-            />
-          </a>
-        </div>
-      </article>
-      <article id="3691" class="location-listing">
-        <a class="location-title" href="#">
-          Coque Muñiz en Conferencia por su Presentación en el Lunario
+        <a href="" class="contentImgGeneral contentImgWibe">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM73877561_-960x640.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Nombre del album</label>
+            </div>
         </a>
 
-        <div class="location-image">
-          <a href="#">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2023/02/AMC54505624_-960x640.jpg"
-              alt="Coque Muñiz en Conferencia por su Presentación en el Lunario"
-            />
-          </a>
-        </div>
-      </article>
-
-      <article id="3694" class="location-listing">
-        <a class="location-title" href="#">
-          Manoella Torres se Presentará en el Lunario del Auditorio de la
-          CDMX</a
-        >
-
-        <div class="location-image">
-          <a href="#">
-            <img
-              style="height: 250px !important; width: auto !important"
-              src="https://entrefam.com/wp-content/uploads/2023/02/AMC54385612_-960x1440.jpg"
-              alt="Manoella Torres se Presentará en el Lunario del Auditorio de la CDMX"
-            />
-          </a>
-        </div>
-      </article>
-
-      <article id="3700" class="location-listing">
-        <a class="location-title" href="#">
-          Raquel Rocha, Maribel Guardia, Alexis Núñez
+        <a href="" class="contentImgGeneral contentImgLong">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM72847458_-960x1440.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Angelique Boyer</label>
+            </div>
         </a>
 
-        <div class="location-image">
-          <a href="#" style="text-align: end">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM51045278_-960x640.jpg"
-              alt="Raquel Rocha, Maribel Guardia, Alexis Núñez"
-            />
-          </a>
-        </div>
-      </article>
-      <article id="3700" class="location-listing">
-        <a class="location-title" href="#">
-          Jesse Huerta, Joy Huerta
+        <a href="" class="contentImgGeneral contentImgLong">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM58296003_-960x1440.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Alfombra de la Nueva Película Maquíllame Otra Vez</label>
+            </div>
         </a>
 
-        <div class="location-image">
-          <a href="#" style="text-align: end">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2023/02/AMC54275601_-960x640.jpg"
-              alt="Jesse Huerta, Joy Huerta"
-            />
-          </a>
-        </div>
-      </article>
-      <article id="3700" class="location-listing">
-        <a class="location-title" href="#">
-          Elenco El Señor de los Cielos
+        <a href="" class="contentImgGeneral contentImgWibe">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM72007374_-960x640.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Pepe Aguilar Presenta Jaripeo Sin Fronteras en la Plaza de Toros México</label>
+            </div>
         </a>
 
-        <div class="location-image">
-          <a href="#" style="text-align: end">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2023/01/ENTREFAM18432017_-960x640.jpg"
-              alt="Elenco El Señor de los Cielos"
-            />
-          </a>
-        </div>
-      </article>
-      <article id="3688" class="location-listing">
-        <a class="location-title" href="#"> ALFOMBRA ROJA DE XV AÑOS DE LUCHA, QUE CELEBRA LOS PROGRAMAS DESMADRUGA2</a>
+        <a href="" class="contentImgGeneral contentImgWibe">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM70107184_-960x640.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Celebridades en la Alfombra Roja de la Serie “La Cabeza de Joaquín Murrieta”</label>
+            </div>
+        </a>
 
-        <div class="location-image">
-          <a href="#">
-            <img
-              width="300"
-              height="169"
-              src="https://entrefam.com/wp-content/uploads/2022/10/ENTREFAM93029476_-2-960x640.jpg"
-              alt="ALFOMBRA ROJA DE XV AÑOS DE LUCHA, QUE CELEBRA LOS PROGRAMAS DESMADRUGA2"
-            />
-          </a>
-        </div>
-      </article>
+        <a href="" class="contentImgGeneral contentImgLong">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/AMC54385612_-960x1440.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Manoella Torres se Presentará en el Lunario del Auditorio de la CDMX</label>
+            </div>
+        </a>
+
+        <a href="" class="contentImgGeneral contentImgWibe">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/01/ENTREFAM50305204_-960x640.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Susana Zavaleta Participará en un Recital con el Tenor Andrea Bocelli</label>
+            </div>
+        </a>
+
+        <a href="" class="contentImgGeneral contentImgLong">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/AMC54255599_-960x1440.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Conferencia de Prensa con Jesse & Joy por su Próxima Participación en el Auditorio Nacional</label>
+            </div>
+        </a>
+
+        <a href="" class="contentImgGeneral contentImgWibe">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/AMC54505624_-960x640.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Coque Muñiz en Conferencia por su Presentación en el Lunario</label>
+            </div>
+        </a>
+
+        <a href="" class="contentImgGeneral contentImgLong">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/01/AMC_20150325_3774-960x1373.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Fallece Polo Polo a los 78 Años de Edad</label>
+            </div>
+        </a>
+
+        <a href="" class="contentImgGeneral contentImgLong">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/01/ENTREFAM43494523_-960x1440.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Alfombra Roja de la Película Infelices Para Siempre</label>
+            </div>
+        </a>
+
+        <a href="" class="contentImgGeneral contentImgWibe">
+            <img class="imgAlbum" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM51515325_-960x640.jpg" alt="">
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12" for="">Fecha 16-02-2023</label>
+                <label class="titleAlbum col-sm-12" for="">Enrique Guzmán Presenta su Disco Titulado Soy Yo</label>
+            </div>
+        </a>
+
     </div>
     <!-- end grid container -->
   </div>
