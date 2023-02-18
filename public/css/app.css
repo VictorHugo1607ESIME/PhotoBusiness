@@ -1,0 +1,67 @@
+
+/*Styles and Info Photos Individual*/
+
+.stylePhotos{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stylePhotos:hover{
+    filter: brightness(35%);
+    transition: 300ms;
+}
+
+.stylePhotos:not(:hover){
+    transition: 300ms;
+}
+
+.contentInfoAlbum{
+    position: absolute;
+    bottom: 2px;
+    left: 15px;
+    cursor: pointer;
+}
+
+.titleAlbum{
+    font-size: 14px;
+    color: white;
+    font-family: "Century Gothic",Verdana,sans-serif;
+    cursor: pointer;
+    height: 24px;
+}
+
+/*  Gallery  */
+
+.contentImgGeneral{
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.contentImgWibe{
+    width: 320px;
+    height: 235px;
+}
+
+.contentImgLong{
+    width: 160px;
+    height: 235px;
+}
+
+.imgAlbum{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.imgAlbum:hover{
+    filter: brightness(35%);
+    transition: 300ms;
+}
+
+.imgAlbum:not(:hover){
+    transition: 300ms;
+}
