@@ -13,6 +13,12 @@
         .color3 { #ede3b4 };
         .color4 { #8b9e9b };
         .color5 { #6d7578 }; --}}
+
+        {{-- .color1 { #785d56 };
+.color2 { #be4c54 };
+.color3 { #c6b299 };
+.color4 { #e6d5c1 };
+.color5 { #fff4e3 }; --}}
     <style>
         .contenedor {
             width: 600px;
