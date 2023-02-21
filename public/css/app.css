@@ -67,7 +67,7 @@
 
 .contentNumberImage{
     position: absolute;
-    top: 5px;
+    top: 10px;
     left: 20px;
     cursor: pointer;
 }
@@ -83,4 +83,9 @@
 .iconNumberPhotos{
     width: auto;
     height: 20px;
+}
+
+.iconSocialNetworks{
+    width: auto;
+    height: 50px;
 }

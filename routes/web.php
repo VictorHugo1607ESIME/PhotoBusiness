@@ -15,10 +15,12 @@ use App\Http\Controllers\HomeController;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/collections', [HomeController::class, 'collections'])->name('collections');
 
 /*Route::get('/', function () {
     return view('maintenance');
 });*/
 
-Route::view('/contact', 'contact')->name('contact');
-Route::view('/maintenance', 'maintenance')->name('maintenance');
+// VIEWS
+Route::view('/politicas', 'web/politicas')->name('politicas');
+Route::view('/quienessomos', 'web/quienessomos')->name('quienessomos');
