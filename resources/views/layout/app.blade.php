@@ -11,7 +11,7 @@
         a {text-decoration: none;}
     </style>
 </head>
-<body style="padding: 1% 12% 0% 12%;">
+<body style="padding: 1% 8% 0% 8%;">
 
     @include('partials.nav')
     @yield('content')

@@ -8,6 +8,11 @@ class HomeController extends Controller
 {
     public function index(){
         $result['title'] = 'Home';
-        return view('home');
+        return view('web/home');
+    }
+
+    public function collections(){
+        $result['title'] = 'Colecciones';
+        return view('web/collections');
     }
 }
