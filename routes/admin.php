@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use Illuminate\Routing\RouteGroup;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,11 +16,16 @@ use App\Http\Controllers\HomeController;
 */
 
 // Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/login',function(){
+Route::get('/login', function () {
     return view('admin.login.index');
 });
-Route::get('/dashboard',function(){
+Route::get('/dashboard', function () {
     return view('admin.dashboard.index');
+});
+Route::group(['prefix' => '/images', 'as' => 'admin.'], function () {
+    Route::get('/', function () {
+        return view('admin.images.index');
+    });
 });
 Route::get('/', function () {
     dd('hola');
