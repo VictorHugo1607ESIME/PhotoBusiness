@@ -8,11 +8,13 @@ class HomeController extends Controller
 {
     public function index(){
         $result['title'] = 'Home';
-        return view('web/home');
+        $result['description'] = 'Las mejores fotos de los espectáculos';
+        return view('web/home')->with('result', $result);
     }
 
     public function collections(){
         $result['title'] = 'Colecciones';
-        return view('web/collections');
+        $result['description'] = 'Colecciones';
+        return view('web/collections')->with('result', $result);;
     }
 }
