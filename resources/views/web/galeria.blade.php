@@ -7,7 +7,7 @@
 </style>
 <div class="child-page-listing">
     <div class="col-12 mt-4 mb-4">
-        <h3 class="titleSection">Las mejores fotos de los espectáculos</h3>
+        <h3 class="titleSection">{{ $result['description'] }}</h3>
     </div>
     <div class="row d-flex justify-content-between">
 
