@@ -12,6 +12,7 @@
     <script src="{{ asset('/fontawesome-free-6/js/all.min.js') }}"></script>
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
+    <script src="https://kit.fontawesome.com/38aa47f16a.js" crossorigin="anonymous"></script>
     @include('admin.sections.css')
     @yield('css')
     <title>@yield('title')</title>
@@ -38,6 +39,11 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#myTable').DataTable();
+        });
+    </script>
     @yield('js')
 </body>
 

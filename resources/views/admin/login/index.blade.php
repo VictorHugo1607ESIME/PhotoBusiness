@@ -14,7 +14,7 @@
         .color4 { #8b9e9b };
         .color5 { #6d7578 }; --}}
 
-        {{-- .color1 { #785d56 };
+    {{-- .color1 { #785d56 };
 .color2 { #be4c54 };
 .color3 { #c6b299 };
 .color4 { #e6d5c1 };
@@ -25,7 +25,7 @@
         }
 
         body {
-            background-color: #ede3b4;
+            background-color: white;
         }
 
         @media only screen and (max-width: 550px) {
@@ -53,7 +53,7 @@
                         <p style="font-size:20px;color:white">Ingresa tus datos para iniciar sesión</p>
                     </div>
                     <div class="col-10 col-sm-10 col-md-6">
-                        <form method="POST">
+                        <form method="POST" action="{{ Route('admin.postLogin') }}">
                             @csrf
                             <div class="row justify-content-center">
                                 <div class="col-12 my-2">
@@ -73,7 +73,8 @@
                                 </div>
                                 <div class="col-6 mb-4">
                                     <div class="d-grid gap-2 my-2">
-                                        <button type="submit" class="btn" style="background: #6d7578" type="button">Enviar</button>
+                                        <button type="submit" class="btn" style="background: #6d7578"
+                                            type="button">Enviar</button>
                                     </div>
                                 </div>
                             </div>
