@@ -1,4 +1,7 @@
 @extends('layout.app')
 @section('content')
-    politicas
+    <h1 class="text-center mb-5">Políticas de privacidad</h1>
+    <p style="font-size: 17px" class="mb-4 ">A los efectos de lo dispuesto en la Ley Orgánica 15/1999, de 13 de Diciembre, de Protección de Datos de Carácter Personal (LOPD), así como en el Real Decreto 1720/2007 de 21 de diciembre por el que se aprueba el Reglamento que la desarrolla, se informa de que la política de privacidad en ENTREFAM es la siguiente:</p>
+    <p style="font-size: 17px" class="mb-4 ">1. A través de la página web de ENTREFAM no se recoge ningún dato personal de los usuarios sin su conocimiento y consentimiento, ni se ceden a terceros.</p>
+    <p style="font-size: 17px" class="mb-4 ">2. EFE pone a disposición del usuario un espacio de participación (blog). Para la gestión de los datos de los usuarios que se registren en dicho blog, ENTREFAM Salud ha creado y registrado ante la Agencia ENTREFAM de Protección de Datos un fichero de datos de carácter personal del que es responsable. La finalidad de dicho fichero es gestionar la relación con los usuarios con la exclusiva finalidad enunciada en la página web. Dichos datos no serán destinados a la realización de actividades promocionales y publicitarias. ENTREFAM se compromete a respetar la confidencialidad del usuario y a utilizar los datos de acuerdo con la finalidad del fichero, adoptando las medidas de seguridad necesarias, de acuerdo con lo establecido en el Reglamento de Medidas de Seguridad de los ficheros automatizados que contengan datos de carácter personal, aprobado por el Real Decreto 994/1999, de 11 de julio.</p>
 @endsection

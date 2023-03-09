@@ -32,6 +32,12 @@
 
 /*  Gallery  */
 .titleSection{
+    font-size: 30px;
+    font-family: "Century Gothic",Verdana,sans-serif;
+}
+
+.dataSsection{
+    font-size: 15px;
     font-family: "Century Gothic",Verdana,sans-serif;
 }
 
@@ -91,4 +97,14 @@
 .iconSocialNetworks{
     width: auto;
     height: 50px;
+}
+
+.menuOptions{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.selectMenuOptions{
+    color: #ff0000;
+    text-decoration-line: underline;
 }

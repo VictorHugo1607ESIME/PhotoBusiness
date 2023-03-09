@@ -14,13 +14,15 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/collections', [HomeController::class, 'collections'])->name('collections');
-
 /*Route::get('/', function () {
     return view('maintenance');
 });*/
 
 // VIEWS
-Route::view('/politicas', 'web/politicas')->name('politicas');
-Route::view('/quienessomos', 'web/quienessomos')->name('quienessomos');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/collections', [HomeController::class, 'collections'])->name('collections');
+Route::get('/politicas', [HomeController::class, 'politicas'])->name('politicas');
+Route::get('/quienessomos', [HomeController::class, 'quienessomos'])->name('quienessomos');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/album/{nameAlbum}', [HomeController::class, 'album'])->name('album');
+Route::get('/comprar', [HomeController::class, 'comprar'])->name('comprar');
