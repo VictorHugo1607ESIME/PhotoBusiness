@@ -59,10 +59,11 @@ class HomeController extends Controller
 
     public function comprar(){
         $result['title'] = 'Compara imágen';
-        $result['description'] = 'Compara imágenlbum';
+        $result['description'] = 'Imágenes relacionadas';
         $result['generalData'] = $this->generalData();
         $result['isWideImage'] = false;
         $result['page'] = null;
+        $result['isCoverPhoto'] = false;
         return view('web/comprar_imagen')->with('result', $result);;
     }
 

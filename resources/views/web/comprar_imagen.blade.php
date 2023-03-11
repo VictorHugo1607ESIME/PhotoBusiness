@@ -10,13 +10,32 @@
 .optionsText{
  font-size: 25px;
 }
+
+.contentImage{
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.contentLogo{
+    position: absolute;
+    width: 85%;
+    height: 90%;
+}
 </style>
 @extends('layout.app')
 @section('content')
     <h3 class="titleSection mt-4 mb-4 col-12">Carrito de compra</h3>
     <div class="row d-flex justify-content-between">
-        <div class="col-md-7 d-flex justify-content-center align-items-start bg-light">
-            <img class="imgAlbumCarrito @if($result['isWideImage']) col-12 @else col-7 @endif" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM76967870_-960x1440.jpg" alt="">
+        <div class="col-md-7 d-flex justify-content-center align-items-center bg-light">
+            <div class="contentImage d-flex justify-content-center align-items-center @if($result['isWideImage']) col-12 @else col-7 @endif">
+                <img class="imgAlbumCarrito col-12" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM76967870_-960x1440.jpg" alt="">
+                <div class="row contentLogo d-flex justify-content-center align-items-center">
+                    <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca_agua.png') }}" alt=""></div>
+                    <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca_agua.png') }}" alt=""></div>
+                    <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca_agua.png') }}" alt=""></div>
+                </div>
+            </div>
             <!--https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM76877861_-960x640.jpg-->
         </div>
         <div class="col-md-4 column">
@@ -40,4 +59,5 @@
             <p class="text-muted mt-5 mb-5">Descripción: Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut .Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
         </div>
     </div>
+    @include('web/galeria')
 @endsection
