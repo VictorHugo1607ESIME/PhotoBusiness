@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlbumsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsersController;
@@ -46,6 +47,15 @@ Route::group(['prefix' => '/users', 'as' => 'admin'], function () {
     Route::get('/edit/{id}', [UsersController::class, 'edit']);
     Route::post('/update', [UsersController::class, 'update']);
     Route::get('/delete/{id}', [UsersController::class], 'delete');
+});
+
+Route::group(['prefix' => '/companies', 'as' => 'admin'], function () {
+});
+Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
+    Route::get('/', [AlbumsController::class, 'index']);
+    Route::get('/add',[AlbumsController::class,'add']);
+    Route::post('/insert',[AlbumsController::class,'insert']);
+    Route::get('/edit/{id}',[AlbumsController::class,'edit']);
 });
 
 Route::view('/contact', 'contact')->name('contact');

@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Libs\helpers;
+use Illuminate\Support\Facades\DB;
 
 class Albums extends Model
 {
     use HasFactory;
-    public help;
+    public $help;
     public function __construct()
     {
         $this->help = new helpers();
@@ -43,6 +44,7 @@ class Albums extends Model
         ]);
         return $id;
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             return 0;
         }
