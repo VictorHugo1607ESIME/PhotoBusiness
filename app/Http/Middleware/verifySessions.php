@@ -5,7 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\User;
-
+// 396x594
+// 683x1024
 class verifySessions
 {
     /**

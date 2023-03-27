@@ -15,16 +15,20 @@
         </ul>
     </li> --}}
     <li>
-        <a href="{{ url('/admin/dashboard')}}" class="nav-link px-0 align-middle">
+        <a href="{{ url('/admin/dashboard') }}" class="nav-link px-0 align-middle">
             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span></a>
     </li>
     <li>
-        <a href="{{ URL('/admin/users')}}" class="nav-link px-0 align-middle">
+        <a href="{{ URL('/admin/users') }}" class="nav-link px-0 align-middle">
             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span></a>
     </li>
     <li>
-        <a href="{{ URL('/admin/images')}}" class="nav-link px-0 align-middle">
+        <a href="{{ URL('/admin/images') }}" class="nav-link px-0 align-middle">
             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Imagenes</span></a>
+    </li>
+    <li>
+        <a href="{{ URL('/admin/albums') }}" class="nav-link px-0 align-middle">
+            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Albums</span></a>
     </li>
     <li>
         <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">

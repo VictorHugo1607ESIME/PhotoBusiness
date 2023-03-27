@@ -24,6 +24,7 @@ class UsersController extends Controller
                 $this->user_visit($user->id);
                 session(['id_user' => Auth::id()]);
                 session(['id_role' => $user->id_role]);
+                session(['id_company' => $user->company_id]);
                 if ($user->id_role) {
                     return redirect()->route('admin.dashboard')
                         ->withSuccess('You have Successfully loggedin');
