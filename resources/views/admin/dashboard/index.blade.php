@@ -1,65 +1,29 @@
 @extends('admin.layout.layout')
 @section('content')
+    @php
+        $d[1] = [
+            'url' => URL('/users'),
+            'title' => 'users',
+        ];
+        $d[2] = [
+            'url' => URL('/users'),
+            'title' => 'companias',
+        ];
+    @endphp
+    {{-- @component('breadcumb', ['data' => $d]) @endcomponent --}}
+
+    <x-breadcumb :data="$d"></x-breadcumb>
     <div class="row">
         <div class="col-6 col-sm-6 col-md-3">
-            <div class="card  text-white card-height" style="background-color:#eeaa88">
-                <div class="card-body text-white">
-                    <div class="row">
-                        <div class="col-6">
-                            <h4 class="text-white">10</h4>
-                        </div>
-                        <div class="col-6 text-right icono">
-                            <i class="fa-solid fa-photo-film fa-3x"></i>
-                        </div>
-                        <div class="col-12">
-                            <h6 class="card-title text-white">Fotos Nuevas</h6>
-                        </div>
-                        <div class="col-12">
-                            <a href="" class="card-link text-dark">Ver <i class="fa-solid fa-eye"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-count color="#bbbb88" title="Ultimas fotos" count="10"><i class="fa-solid fa-photo-film fa-3x"></i>
+            </x-card-count>
         </div>
         <div class="col-6 col-sm-6 col-md-3">
-            <div class="card  text-white card-height" style="background-color:#bbbb88">
-                <div class="card-body text-white">
-                    <div class="row">
-                        <div class="col-6">
-                            <h4 class="text-white">150</h4>
-                        </div>
-                        <div class="col-6 text-right icono">
-                            <i class="fa-solid fa-eye fa-3x"></i>
-                        </div>
-                        <div class="col-12">
-                            <h6 class="card-title text-white">Visitas</h6>
-                        </div>
-                        <div class="col-12">
-                            <a href="" class="card-link text-dark">Ver <i class="fa-solid fa-eye"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-count color="#80273d" title="Visitas" count="150"><i class="fa-solid fa-eye fa-3x"></i></x-card-count>
         </div>
         <div class="col-6 col-sm-6 col-md-3">
-            <div class="card  text-white card-height" style="background-color:#ccc68d">
-                <div class="card-body text-white">
-                    <div class="row">
-                        <div class="col-6">
-                            <h4 class="text-white">5</h4>
-                        </div>
-                        <div class="col-6 text-right icono">
-                            <i class="fa-solid fa-file-arrow-down fa-3x"></i>
-                        </div>
-                        <div class="col-12">
-                            <h6 class="card-title text-white">Descargas</h6>
-                        </div>
-                        <div class="col-12">
-                            <a href="" class="card-link text-dark">Ver <i class="fa-solid fa-eye"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-card-count color="#ccc68d" title="Descargas" count="100"><i class="fa-solid fa-file-arrow-down fa-3x"></i>
+            </x-card-count>
         </div>
     </div>
     <div class="row mt-4">

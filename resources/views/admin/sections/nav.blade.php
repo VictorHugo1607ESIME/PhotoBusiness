@@ -27,6 +27,7 @@
             </div>
         </div>
         <div class="col py-3">
+           
             @yield('content')
         </div>
     </div>
