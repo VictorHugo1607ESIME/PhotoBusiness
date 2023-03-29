@@ -15,8 +15,7 @@
                     <input type="date" class="form-control" id="date" name="date">
                 </div>
                 <div class="mb-3 text-center">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <a class="btn btn-secondary" href="{{ url('/admin/albums') }}">Volver</a>
+                    <x-btn-form></x-btn-form>
                 </div>
             </form>
         </div>
