@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class Breadcumb extends Component
+class Breadcrumb extends Component
 {
     /**
      * Create a new component instance.
@@ -25,7 +25,6 @@ class Breadcumb extends Component
      */
     public function render()
     {
-        // dd($this->data);
-        return view('components.breadcumb')->with('data', $this->data);
+        return view('components.breadcrumb')->with('data', $this->data);
     }
 }

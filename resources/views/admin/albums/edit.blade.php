@@ -25,24 +25,25 @@
                         </option>
                     </select>
                 </div>
-               
+
                 <div class="mb-3 text-center">
-                   
+                    <x-btn-form></x-btn-form>
                 </div>
             </form>
         </div>
     </div>
     <div class="row">
         <div class="mb-3">
-            <form action="{{ url('/admin/images/upImage') }}" class="dropzone" id="my-awesome-dropzone">
-                <input type="hidden" name="id" value="{{ $result['album']->album_name }}">
+            <form action="{{ url('/admin/albums/upImage') }}" method="POST" enctype="multipart/form-data" class="dropzone"
+                id="my-awesome-dropzone">
+                <input type="hidden" name="slug" value="{{ $result['album']->album_slug }}">
                 @csrf
             </form>
         </div>
         <div class="">
             <div class="card">
                 <div class="card-body">
-                    This is some text within a card body.
+
                 </div>
             </div>
         </div>

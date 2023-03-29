@@ -27,6 +27,7 @@
             </div>
         </div>
         <div class="col py-3">
+            <x-breadcrumb :data="isset($result['breadcrumb']) ? $result['breadcrumb'] : null" />
             @if (session('success'))
                 <x-alert-success></x-alert-success>
             @endif

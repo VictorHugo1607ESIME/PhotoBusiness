@@ -16,6 +16,8 @@ class AlbumsController extends Controller
     }
     public function index(Request $request)
     {
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Albums', 'url' => url('admin/albums')]);
         $result['albums'] = DB::table('albums')
             ->leftJoin('companies', 'companies.id', 'albums.company_id')
             ->where('albums.album_status', 'A')
@@ -24,12 +26,19 @@ class AlbumsController extends Controller
     }
     public function add(Request $request)
     {
-        return view('admin.albums.add');
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Albums', 'url' => url('admin/albums')]);
+        array_push($result['breadcrumb'], ['title' => 'Agregar album', 'url' => url('admin/albums/add')]);
+        return view('admin.albums.add')->with('result', $result);
     }
 
     public function edit($id)
     {
         $result = array();
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Albums', 'url' => url('admin/albums')]);
+        array_push($result['breadcrumb'], ['title' => 'Agregar album', 'url' => url('admin/albums/add')]);
+        array_push($result['breadcrumb'], ['title' => 'Editar album', 'url' => url('admin/albums/edit', $id)]);
         $id = base64_decode($id);
         if (is_numeric($id)) {
             $result['album'] = DB::table('albums')
@@ -81,5 +90,29 @@ class AlbumsController extends Controller
             }
         }
         return redirect()->back()->with('success', true);
+    }
+
+    public function upImage(Request $request)
+    {
+        try {
+            $album = DB::table('albums')->where('album_slug', trim($request->slug))->first();
+            if ($album && $request->hasFile("file")) {
+                $imagen = $request->file("file");
+
+                $ruta = public_path("img/" . trim($request->slug)) . '/';
+                if (!file_exists($ruta)) {
+                    mkdir($ruta, 0777, true);
+                }
+                $nameImagen = $imagen->getClientOriginalName();
+                $data= exif_read_data( $ruta . $nameImagen);
+                copy($imagen->getRealPath(), $ruta . $nameImagen);
+                return response(['success' => true], 200);
+            }
+            return response(['success' => false], 404);
+        } catch (\Throwable $th) {
+            //throw $th;
+            dd($th);
+            return response(['success' => false], 404);
+        }
     }
 }
