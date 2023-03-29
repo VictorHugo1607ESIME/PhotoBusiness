@@ -32,6 +32,7 @@
                 <canvas id="myChart"></canvas>
             </div>
         </div>
+        <x-alert-success/>
     </div>
 @endsection
 

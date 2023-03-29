@@ -2,7 +2,7 @@
 @section('content')
     <div class="row">
         <div class="col-12 my-4 text-end">
-            <a href="{{ URL('/admin/albums/add') }}" class="btn btn-primary">Agregar</a>
+            <x-btn-add url="{{ URL('/admin/albums/add') }}" />
         </div>
         <div class="col-12 col-sm-12 col-md-12">
             <div class="table-respose">
