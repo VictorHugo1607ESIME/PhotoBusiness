@@ -53,9 +53,11 @@ Route::group(['prefix' => '/companies', 'as' => 'admin'], function () {
 });
 Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
     Route::get('/', [AlbumsController::class, 'index']);
-    Route::get('/add',[AlbumsController::class,'add']);
-    Route::post('/insert',[AlbumsController::class,'insert']);
-    Route::get('/edit/{id}',[AlbumsController::class,'edit']);
+    Route::get('/add', [AlbumsController::class, 'add']);
+    Route::post('/insert', [AlbumsController::class, 'insert']);
+    Route::get('/edit/{id}', [AlbumsController::class, 'edit']);
+    Route::post('/upImage', [AlbumsController::class, 'upImage']);
+    Route::get('/getImages_album/{id}', [AlbumsController::class, 'getImages_album']);
 });
 
 Route::view('/contact', 'contact')->name('contact');
