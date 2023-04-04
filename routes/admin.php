@@ -57,6 +57,7 @@ Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
     Route::post('/insert', [AlbumsController::class, 'insert']);
     Route::get('/edit/{id}', [AlbumsController::class, 'edit']);
     Route::post('/upImage', [AlbumsController::class, 'upImage']);
+    Route::get('/getImages_album/{id}', [AlbumsController::class, 'getImages_album']);
 });
 
 Route::view('/contact', 'contact')->name('contact');

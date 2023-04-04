@@ -5,7 +5,7 @@
             <h2 class="text-center">Editar de album {{ $result['album']->album_name }}</h2>
             <form action="{{ URL('/admin/albums/insert') }}" method="POST">
                 @csrf
-                <input type="hidden" name="id" value="{{ $result['album']->album_name }}">
+                <input type="hidden" name="id" id="id_album" value="{{ $result['album']->id }}">
                 <div class="mb-3">
                     <label for="album_name" class="form-label">Nombre</label>
                     <input type="text" class="form-control" id="album_name" name="name"
@@ -35,16 +35,14 @@
     <div class="row">
         <div class="mb-3">
             <form action="{{ url('/admin/albums/upImage') }}" method="POST" enctype="multipart/form-data" class="dropzone"
-                id="my-awesome-dropzone">
+                id="dropzone">
                 <input type="hidden" name="slug" value="{{ $result['album']->album_slug }}">
                 @csrf
             </form>
         </div>
-        <div class="">
-            <div class="card">
-                <div class="card-body">
-
-                </div>
+        <div class="card ">
+            <div class="card-body p-2" id="html_images">
+                {!! $result['html_images'] !!}
             </div>
         </div>
     </div>
@@ -52,8 +50,33 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            let myDropzone = new Dropzone("div#my-awesome-dropzone");;
+            let id = $('#id_album').val();
+
+            function get_images(id) {
+                $('#html_images').empty();
+                console.log('cargar..');
+                $.ajax({
+                    type: "get",
+                    url: "<?= url('/admin/albums/getImages_album/') ?>" + "/" + id,
+                    dataType: "html",
+                    success: function(res) {
+                        $('#html_images').html(res);
+                    }
+                });
+            }
+            setInterval(get_images(id), 1000);
+            let myDropzone = Dropzone("#dropzone", {
+                addedfile: file => {
+                    // ONLY DO THIS IF YOU KNOW WHAT YOU'RE DOING!
+                }
+            }).then(() => {
+                console.log('Termino');
+            }).catch((error) => {
+                console.error(error);
+            });
+
         });
+
         // Dropzone has been added as a global variable.
     </script>
 @endsection
