@@ -32,9 +32,7 @@ Route::get('logout', [UsersController::class, 'logout']);
 //login
 
 Route::group(['prefix' => '/images', 'as' => 'admin'], function () {
-    Route::get('/', function () {
-        return view('admin.images.index');
-    });
+    Route::get('/', [ImagesController::class, 'index']);
     Route::post('/upImage', [ImagesController::class, 'upImage']);
 });
 Route::get('/', function () {

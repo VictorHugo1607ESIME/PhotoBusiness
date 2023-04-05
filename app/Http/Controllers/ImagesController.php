@@ -19,10 +19,13 @@ class ImagesController extends Controller
      */
     public function index()
     {
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Imagenes', 'url' => url('admin/images')]);
         if (session('user_id') == 30) {
             return redirect('/products')->with('alert', true);
         }
-        return view('images.index');
+        $result['images'] = DB::table('images')->orderBy('id', 'DESC')->get();
+        return view('admin.images.index')->with('result', $result);
     }
 
     public function img_temporales()
