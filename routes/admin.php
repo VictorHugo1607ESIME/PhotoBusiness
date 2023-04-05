@@ -43,7 +43,7 @@ Route::group(['prefix' => '/users', 'as' => 'admin'], function () {
     Route::get('/add', [UsersController::class, 'add']);
     Route::post('/insert', [UsersController::class, 'insert']);
     Route::get('/edit/{id}', [UsersController::class, 'edit']);
-    Route::post('/update', [UsersController::class, 'update']);
+    Route::post('/update', [UsersController::class, 'insert']);
     Route::get('/delete/{id}', [UsersController::class], 'delete');
 });
 

@@ -37,6 +37,21 @@ class UsersController extends Controller
             return redirect()->route('admin.login')->withSuccess('Oppes! You have entered invalid credentials');
         }
     }
+    public function insert(Request $request)
+    {
+        try {
+            $userModel = new User();
+            if (isset($request->id)) {
+                $user = $userModel->edit($request);
+            } else {
+                $user = $userModel->create($request);
+            }
+            return redirect()->back()->with('success', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
+        }
+    }
     public function user_visit($user_id)
     {
         try {
@@ -86,19 +101,26 @@ class UsersController extends Controller
     }
     public function index()
     {
-        $result['users']=DB::table('users')->get();
-        return view('admin.users.index')->with('result',$result);
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Usuarios', 'url' => url('admin/users')]);
+        $result['users'] = DB::table('users')->orderBy('id')->get();
+        return view('admin.users.index')->with('result', $result);
     }
     public function add()
     {
-        $result=array();
-        return view('admin.users.add')->with('result',$result);
+        $result = array();
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Usuarios', 'url' => url('admin/users')]);
+        array_push($result['breadcrumb'], ['title' => 'Agregar usuario', 'url' => url('admin/users/add')]);
+        return view('admin.users.add')->with('result', $result);
     }
     public function edit($id)
     {
-        $result=array();
-        return view('admin.users.edit')->with('result',$result);
-    
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Usuarios', 'url' => url('admin/users')]);
+        array_push($result['breadcrumb'], ['title' => 'Editar usuario', 'url' => url('admin/users/add')]);
+        $result['data'] = DB::table('users')->where('id', $id)->first();
+        return view('admin.users.edit')->with('result', $result);
     }
 
     public function logout()
