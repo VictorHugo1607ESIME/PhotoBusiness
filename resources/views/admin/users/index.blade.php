@@ -26,8 +26,10 @@
                                 <td></td>
                                 <td>{{ $item->updated_at }}</td>
                                 <td class="text-end">
-                                    <a href="{{ url('admin/users/edit',$item->id)}}" class="btn btn-primary"><i class="fa-solid fa-pencil"></i></a>
-                                    <button class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
+                                    <a href="{{ url('admin/users/edit', $item->id) }}" class="btn btn-primary"><i
+                                            class="fa-solid fa-pencil"></i></a>
+                                    <button class="btn btn-danger deletedUser" data-id="{{ $item->id }}"><i
+                                            class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
                         @endforeach
@@ -42,4 +44,23 @@
     </div>
 @endsection
 @section('js')
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.deletedUser', function() {
+                let id = $(this).data('id');
+                Swal.fire({
+                    title: '¿Estas seguro de querer eliminar?',
+                    showCancelButton: true,
+                    confirmButtonColor: '#B03A2E',
+                    confirmButtonText: 'Si, Eliminar',
+
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        Swal.fire('Eliminado', '', 'success')
+                    }
+                })
+            });
+        });
+    </script>
 @endsection
