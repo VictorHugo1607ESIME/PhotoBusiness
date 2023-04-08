@@ -16,19 +16,19 @@
     </li> --}}
     <li>
         <a href="{{ url('/admin/dashboard') }}" class="nav-link px-0 align-middle">
-            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span></a>
+            <i class="fa-solid fa-chart-pie"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span></a>
     </li>
     <li>
         <a href="{{ URL('/admin/users') }}" class="nav-link px-0 align-middle">
-            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span></a>
+            <i class="fa-solid fa-users"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span></a>
     </li>
     <li>
         <a href="{{ URL('/admin/images') }}" class="nav-link px-0 align-middle">
-            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Imagenes</span></a>
+            <i class="fa-solid fa-images"></i> <span class="ms-1 d-none d-sm-inline">Imagenes</span></a>
     </li>
     <li>
         <a href="{{ URL('/admin/albums') }}" class="nav-link px-0 align-middle">
-            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Albums</span></a>
+            <i class="fa-regular fa-folder-open"></i> <span class="ms-1 d-none d-sm-inline">Albums</span></a>
     </li>
     <li>
         <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">

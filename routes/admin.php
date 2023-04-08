@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\IndexController;
 use Illuminate\Routing\RouteGroup;
 
 /*
@@ -25,15 +26,14 @@ Route::get('/login', function () {
 })->name('admin.login');
 Route::post('/postLogin', [UsersController::class, 'postLogin'])->name('admin.postLogin');
 Route::get('/postRegister', [UsersController::class, 'postRegister']);
-Route::get('/dashboard', function () {
-    return view('admin.dashboard.index');
-})->name('admin.dashboard');
+Route::get('/dashboard', [IndexController::class,'dashboard'])->name('admin.dashboard');
 Route::get('logout', [UsersController::class, 'logout']);
 //login
 
 Route::group(['prefix' => '/images', 'as' => 'admin'], function () {
     Route::get('/', [ImagesController::class, 'index']);
     Route::post('/upImage', [ImagesController::class, 'upImage']);
+    Route::get('/deleted/{id}',[ImagesController::class,'deleted']);
 });
 Route::get('/', function () {
     dd('hola');

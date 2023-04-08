@@ -1,6 +1,6 @@
 @extends('admin.layout.layout')
 @section('content')
-    <div class="row">
+    <div class="row justify-content-start" id="div_image">
 
         {{-- @if (!empty($result['images'])) --}}
         @foreach ($result['images'] as $item)

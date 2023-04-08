@@ -23,9 +23,11 @@
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->company_name }}</td>
                                     <td>{{ $item->album_name }}</td>
-                                    <td>{{ $item->album_status }}</td>
+                                    <td>
+                                        <x-status value="{{ $item->album_status }}" />
+                                    </td>
                                     <td>{{ $item->date }}</td>
-                                    <td>{{ $item->images_count }}</td>
+                                    <td class="text-center">{{ $item->images_count }}</td>
                                     <td>
                                         <x-btn-edit url="{{ URL('/admin/albums/edit', base64_encode($item->id)) }}">Editar
                                         </x-btn-edit>
