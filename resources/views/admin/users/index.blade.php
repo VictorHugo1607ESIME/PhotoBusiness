@@ -23,7 +23,9 @@
                                 <td>{{ $item->user_name }}</td>
                                 <td>{{ $item->first_name }} {{ $item->last_name }}</td>
                                 <td>{{ $item->email }}</td>
-                                <td></td>
+                                <td>
+                                    <x-status value="{{ $item->status }}" />
+                                </td>
                                 <td>{{ $item->updated_at }}</td>
                                 <td class="text-end">
                                     <a href="{{ url('admin/users/edit', $item->id) }}" class="btn btn-primary"><i

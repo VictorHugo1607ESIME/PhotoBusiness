@@ -5,41 +5,50 @@
             <h2>Editar el usuario</h2>
         </div>
         <div class="col-12 col-sm-12 col-md-6">
-            <form action="{{ URL('/admin/users/insert')}}" method="POST">
-                <input type="hidden" name="id" value="{{ $result['data']->id }}">
-                @csrf
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ $result['data']->email }}">
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                        role="tab" aria-controls="home" aria-selected="true">Datos</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                        role="tab" aria-controls="profile" aria-selected="false">Contaseña</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="config-tab" data-bs-toggle="tab" data-bs-target="#config" type="button"
+                        role="tab" aria-controls="config" aria-selected="false">Configuración</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    @include('admin.users.form_datos')
                 </div>
-                <div class="mb-3">
-                    <label for="user_name" class="form-label">Nombre de usuario</label>
-                    <input type="text" class="form-control" id="user_name" name="user_name" value="{{ $result['data']->user_name }}">
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    @include('admin.users.form_pass')
                 </div>
-                <div class="mb-3">
-                    <label for="first_name" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="first_name" name="first_name"  value="{{ $result['data']->first_name }}">
+                <div class="tab-pane fade" id="config" role="tabpanel" aria-labelledby="config-tab">
+                    @include('admin.users.form_config')
                 </div>
-                <div class="mb-3">
-                    <label for="last_name" class="form-label">Apellido</label>
-                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ $result['data']->last_name }}">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Rol</label>
-                    <select class="form-control" name="role" id="role">
-                        <option value="2">Usuario</option>
-                        <option value="1">Administrador</option>
-                    </select>
-                </div>
-                <div class="mb-3 text-center">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <a href="{{ URL('/admin/users') }}" class="btn btn-secondary">Volver</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('.viewPass').click(function(e) {
+                e.preventDefault();
+                console.log();
+                $(this).empty();
+                if ($("#password").attr("type") == 'text') {
+                    $('.pass').attr('type', 'password');
+                    $(this).html('<i class="fa-regular fa-eye"></i>');
+                } else {
+                    $('.pass').attr('type', 'text');
+                    $(this).html('<i class="fa-solid fa-eye-slash"></i>');
+                }
+            });
+        });
+    </script>
 @endsection

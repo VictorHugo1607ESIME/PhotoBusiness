@@ -9,10 +9,9 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="{{ asset('/fontawesome-free-6/js/all.min.js') }}"></script>
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
-    <script src="https://kit.fontawesome.com/38aa47f16a.js" crossorigin="anonymous"></script>
+    <script src="{{ asset('fontawesome\js\all.min.js') }}"></script>
     @include('admin.sections.css')
     @yield('css')
     <title>@yield('title')</title>
@@ -40,6 +39,8 @@
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     <script>
         $(document).ready(function() {
             $('#myTable').DataTable();
@@ -71,13 +72,56 @@
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                    Swal.fire('Eliminado', '', 'success')
+                    deleteImagen(id);
                 }
             })
         });
 
         function deleteImagen(id) {
+            cargando();
+            $.ajax({
+                type: "get",
+                url: "<?= url('/admin/images/deleted') ?>" + "/" + id,
+                dataType: "json",
+                success: function(res) {
+                    console.log(res);
+                    if (res.success) {
+                        if ($('#div_image')) {
+                            Swal.fire(
+                                'Realizado',
+                                'Proceso completado',
+                                'success'
+                            )
+                            $('#div_image').empty();
+                            $('#div_image').html(res.html);
+                        } else {
+                            Swal.fire(
+                                'Realizado',
+                                'Proceso completado',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        }
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            'Proceso no realizado',
+                            'error'
+                        )
+                    }
+                }
+            });
+        }
 
+        function cargando() {
+            Swal.fire({
+                title: 'هل تريد الاستمرار؟',
+                icon: 'question',
+                iconHtml: '؟',
+                showCancelButton: false,
+                showCloseButton: false
+            })
         }
     </script>
     @yield('js')

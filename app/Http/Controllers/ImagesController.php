@@ -28,6 +28,12 @@ class ImagesController extends Controller
         return view('admin.images.index')->with('result', $result);
     }
 
+    public function table_index()
+    {
+        $images = DB::table('images')->orderBy('id', 'DESC')->get();
+        return view('admin.albums.get_images')->with('images', $images)->render();
+    }
+
     public function img_temporales()
     {
         $thefolder_temp = public_path() . "/temp_product/";
@@ -364,5 +370,24 @@ class ImagesController extends Controller
             }
         }
         return redirect(URL('/images'));
+    }
+
+    public function deleted($id = 0)
+    {
+        try {
+            if ($id != 0 && is_numeric($id)) {
+                $imagen = DB::table('images')->where('id', $id)->first();
+                if ($imagen && file_exists(public_path($imagen->image_path))) {
+                    unlink(public_path($imagen->image_path));
+                }
+                    DB::table('images')->where('id', $id)->delete();
+                    $table= $this->table_index();
+                    return response(['success' => true,'html'=>$table], 200);
+            }
+            return response(['success' => false], 404);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response(['success' => false], 404);
+        }
     }
 }
