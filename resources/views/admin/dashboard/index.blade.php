@@ -1,18 +1,6 @@
 @extends('admin.layout.layout')
 @section('content')
-    @php
-        $d[1] = [
-            'url' => URL('/users'),
-            'title' => 'users',
-        ];
-        $d[2] = [
-            'url' => URL('/users'),
-            'title' => 'companias',
-        ];
-    @endphp
-    {{-- @component('breadcumb', ['data' => $d]) @endcomponent --}}
 
-    <x-breadcumb :data="$d"></x-breadcumb>
     <div class="row">
         <div class="col-6 col-sm-6 col-md-3">
             <x-card-count color="#bbbb88" title="Ultimas fotos" count="10"><i class="fa-solid fa-photo-film fa-3x"></i>
@@ -32,7 +20,6 @@
                 <canvas id="myChart"></canvas>
             </div>
         </div>
-        <x-alert-success/>
     </div>
 @endsection
 

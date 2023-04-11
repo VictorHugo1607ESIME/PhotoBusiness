@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\IndexController;
 use Illuminate\Routing\RouteGroup;
 
 /*
@@ -25,17 +26,14 @@ Route::get('/login', function () {
 })->name('admin.login');
 Route::post('/postLogin', [UsersController::class, 'postLogin'])->name('admin.postLogin');
 Route::get('/postRegister', [UsersController::class, 'postRegister']);
-Route::get('/dashboard', function () {
-    return view('admin.dashboard.index');
-})->name('admin.dashboard');
+Route::get('/dashboard', [IndexController::class,'dashboard'])->name('admin.dashboard');
 Route::get('logout', [UsersController::class, 'logout']);
 //login
 
 Route::group(['prefix' => '/images', 'as' => 'admin'], function () {
-    Route::get('/', function () {
-        return view('admin.images.index');
-    });
+    Route::get('/', [ImagesController::class, 'index']);
     Route::post('/upImage', [ImagesController::class, 'upImage']);
+    Route::get('/deleted/{id}',[ImagesController::class,'deleted']);
 });
 Route::get('/', function () {
     dd('hola');
@@ -45,7 +43,7 @@ Route::group(['prefix' => '/users', 'as' => 'admin'], function () {
     Route::get('/add', [UsersController::class, 'add']);
     Route::post('/insert', [UsersController::class, 'insert']);
     Route::get('/edit/{id}', [UsersController::class, 'edit']);
-    Route::post('/update', [UsersController::class, 'update']);
+    Route::post('/update', [UsersController::class, 'insert']);
     Route::get('/delete/{id}', [UsersController::class], 'delete');
 });
 
@@ -53,9 +51,11 @@ Route::group(['prefix' => '/companies', 'as' => 'admin'], function () {
 });
 Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
     Route::get('/', [AlbumsController::class, 'index']);
-    Route::get('/add',[AlbumsController::class,'add']);
-    Route::post('/insert',[AlbumsController::class,'insert']);
-    Route::get('/edit/{id}',[AlbumsController::class,'edit']);
+    Route::get('/add', [AlbumsController::class, 'add']);
+    Route::post('/insert', [AlbumsController::class, 'insert']);
+    Route::get('/edit/{id}', [AlbumsController::class, 'edit']);
+    Route::post('/upImage', [AlbumsController::class, 'upImage']);
+    Route::get('/getImages_album/{id}', [AlbumsController::class, 'getImages_album']);
 });
 
 Route::view('/contact', 'contact')->name('contact');

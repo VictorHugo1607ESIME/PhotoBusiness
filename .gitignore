@@ -3,6 +3,8 @@
 /public/hot
 /public/storage
 /public/temp_product
+/public/img/
+/public/
 /storage/*.key
 /vendor
 .env

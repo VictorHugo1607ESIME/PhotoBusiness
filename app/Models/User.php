@@ -79,7 +79,11 @@ class User extends Authenticatable
                 'first_name'=>ucwords(trim($data['first_name'])),
                 'last_name'=>ucwords(trim($data['last_name'])),
                 'email' => trim($data['email']),
+<<<<<<< HEAD
                 'password' => isset($data['password']) && $data['password']!=null ? Hash::make(trim($data['password'])) :null ,
+=======
+                'password' =>  Hash::make(trim($data['password'])) ,
+>>>>>>> 814fd889404760e420da4e2e04ba40f14ac48efe
                 'role_id' => isset($data['role_id']) ? $data['role_id'] : 0,
                 'users_onlien'=> 0,
                 'users_max_onlien'=>isset($data['users_max_onlien']) ? $data['users_max_onlien'] : null,

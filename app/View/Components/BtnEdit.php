@@ -4,30 +4,26 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class card-img extends Component
+class BtnEdit extends Component
 {
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public $url;
-    public $alt;
-    public $id;
-    public function __construct($url,$id,$alt=null)
-    {
-        $this->url=$url;
-        $this->path=$path;
-        $this->id=$id;
-    }
 
     /**
      * Get the view / contents that represent the component.
      *
      * @return \Illuminate\Contracts\View\View|\Closure|string
      */
+    public $url;
+    public function __construct($url=null)
+    {
+        $this->url = $url;
+    }
     public function render()
     {
-        return view('components.card-img');
+        return view('components.btn-edit');
     }
 }

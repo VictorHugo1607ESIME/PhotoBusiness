@@ -13,9 +13,28 @@
                         <th>Titulo</th>
                         <th>Estatus</th>
                         <th>Fecha</th>
+                        <th># imagenes</th>
                         <th></th>
                     </thead>
                     <tbody>
+                        @if (!empty($result['albums']))
+                            @foreach ($result['albums'] as $item)
+                                <tr>
+                                    <td>{{ $item->id }}</td>
+                                    <td>{{ $item->company_name }}</td>
+                                    <td>{{ $item->album_name }}</td>
+                                    <td>
+                                        <x-status value="{{ $item->album_status }}" />
+                                    </td>
+                                    <td>{{ $item->date }}</td>
+                                    <td class="text-center">{{ $item->images_count }}</td>
+                                    <td>
+                                        <x-btn-edit url="{{ URL('/admin/albums/edit', base64_encode($item->id)) }}">Editar
+                                        </x-btn-edit>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
 
                     </tbody>
                 </table>
@@ -23,5 +42,3 @@
         </div>
     </div>
 @endsection
-
-
