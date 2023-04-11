@@ -98,6 +98,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $result=array();
+        $result['data']=DB::table('users')->where('id',$id)->first();
         return view('admin.users.edit')->with('result',$result);
 
     }
