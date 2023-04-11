@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Session;
 
 class HomeController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
+
         $result['title'] = 'Home';
         $result['description'] = 'Las mejores fotos de los espectáculos';
         $result['generalData'] = $this->generalData();
@@ -21,6 +26,15 @@ class HomeController extends Controller
         $result['generalData'] = $this->generalData();
         $result['isCoverPhoto'] = true;
         $result['page'] = 'collections';
+        return view('web/collections')->with('result', $result);;
+    }
+
+    public function exclusives(){
+        $result['title'] = 'Exclusivas';
+        $result['description'] = 'Exclusivas';
+        $result['generalData'] = $this->generalData();
+        $result['isCoverPhoto'] = true;
+        $result['page'] = 'exclusive';
         return view('web/collections')->with('result', $result);;
     }
 
@@ -67,8 +81,55 @@ class HomeController extends Controller
         return view('web/comprar_imagen')->with('result', $result);;
     }
 
+    public function myaccount(){
+        $result['title'] = 'Mi cuenta';
+        $result['description'] = 'Historial de descargas';
+        $result['page'] = null;
+        $result['isCoverPhoto'] = true;
+        $result['generalData'] = $this->generalData();
+        return view('web/myaccount')->with('result', $result);
+    }
+
+    public function shoppingcart(){
+        $result['title'] = 'Mi cuenta';
+        $result['page'] = null;
+        $result['generalData'] = $this->generalData();
+        return view('web/shoppingcart')->with('result', $result);
+    }
+
     function generalData(){
-        $generalData['isLogin'] = false;
+        $generalData['isLogin'] = session('isLogin');
+        $generalData['hasExclusives'] = true;
         return $generalData;
+    }
+
+    function login(Request $request){
+
+        try {
+            $dataUser = DB::table('users')->where('email', '=', $request->get('recipientEmail'))->first();
+            if(isset($dataUser)){
+                $credentials = ['email' => trim($request->recipientEmail), "password" => trim($request->recipientPass)];
+                if (Auth::attempt($credentials)){
+                    session(["isLogin" => true]);
+                }else{
+                    session(["isLogin" => false]);
+                }
+            }else{
+                $request->session()->put('isLogin', false);
+            }
+        } catch (\Illuminate\Database\QueryException $ex) {
+            dd($ex->getMessage());
+        }
+        return back();
+    }
+
+    function logout(){
+        Session::flush();
+        Auth::logout();
+        return back();
+    }
+
+    function getAlbum(){
+        $dataAlbum = DB::table('users')->where('email', '=', $request->get('recipientEmail'))->first();
     }
 }

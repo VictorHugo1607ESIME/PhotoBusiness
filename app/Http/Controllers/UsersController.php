@@ -67,6 +67,7 @@ class UsersController extends Controller
             $check = $userModel->create($data);
             dd("termino");
         } catch (\Throwable $th) {
+            dd($th);
             throw $th;
         }
     }
@@ -98,7 +99,7 @@ class UsersController extends Controller
     {
         $result=array();
         return view('admin.users.edit')->with('result',$result);
-    
+
     }
 
     public function logout()

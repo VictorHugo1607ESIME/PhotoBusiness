@@ -14,7 +14,7 @@ use App\Libs\helpers;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    public help;
+    public $help;
     public function __construct()
     {
         $this->help = new helpers();
@@ -79,7 +79,7 @@ class User extends Authenticatable
                 'first_name'=>ucwords(trim($data['first_name'])),
                 'last_name'=>ucwords(trim($data['last_name'])),
                 'email' => trim($data['email']),
-                'password' => isset($data['password']) && $data['password']!=null ? Hash::make(trim($data['password'])) :,
+                'password' => isset($data['password']) && $data['password']!=null ? Hash::make(trim($data['password'])) :null ,
                 'role_id' => isset($data['role_id']) ? $data['role_id'] : 0,
                 'users_onlien'=> 0,
                 'users_max_onlien'=>isset($data['users_max_onlien']) ? $data['users_max_onlien'] : null,
@@ -96,14 +96,14 @@ class User extends Authenticatable
         try {
             $change=DB::table('users')->where('id',$id)->update([
                 'password' =>Hash::make(trim($pass)),
-                
+
             ]);
             return true;
         } catch (\Throwable $th) {
             //throw $th;
             return false;
         }
-       
+
     }
 
     public function verify_sessions()

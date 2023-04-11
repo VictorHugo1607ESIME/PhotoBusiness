@@ -17,7 +17,9 @@
 </head>
 <body style="padding: 1% 8% 0% 8%;">
     @include('partials.nav')
-    @yield('content')
+    <div style="min-height: 65vh">
+       @yield('content')
+    </div>
     @include('partials.footer')
     @include('web/login')
 </body>
