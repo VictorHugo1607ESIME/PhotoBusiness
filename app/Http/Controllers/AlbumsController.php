@@ -144,4 +144,30 @@ class AlbumsController extends Controller
             //throw $th;
         }
     }
+    public function top_html($id)
+    {
+        try {
+            $album = DB::table('albums')->where('id', $id)->first();
+            return view('admin.albums.form_top')->with('album', $album)->render();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function top_edit(Request $request)
+    {
+        try {
+            $top_albums = DB::table('albums')
+                ->where('albums_top', $request->album_top)->update([
+                    'albums_top' => null
+                ]);
+            $new_top = DB::table('albums')
+                ->where('id', $request->id)->update([
+                    'albums_top' => $request->album_top
+                ]);
+            return redirect()->back()->with('success', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
+        }
+    }
 }
