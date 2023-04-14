@@ -158,7 +158,7 @@ class AlbumsController extends Controller
         try {
             $top_albums = DB::table('albums')
                 ->where('albums_top', $request->album_top)->update([
-                    'albums_top' => 0
+                    'albums_top' => null
                 ]);
             $new_top = DB::table('albums')
                 ->where('id', $request->id)->update([
