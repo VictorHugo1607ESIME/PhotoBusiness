@@ -17,27 +17,19 @@
 @section('content')
 <div class="contentMainsPhotosHeigth mb-2 mt-2 d-flex justify-content-between row">
 
-    <a href="/album/Diego Boneta Lanza su Marca de Tequila “Defrente”" class="mainContentPhoto col-sm-12 col-md-8">
-        <img class="stylePhotos" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM59036077_-960x640.jpg" >
-        <div class="contentNumberImage col-12 row">
-            <label class="numberImage col-12" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> 10 imágenes</label>
-        </div>
-        <div class="contentInfoAlbum column">
-            <label class="titleAlbum col-sm-12">12 - 08 - 2023</label>
-            <label class="titleAlbum col-sm-12">Diego Boneta Lanza su Marca de Tequila “Defrente”</label>
-        </div>
-    </a>
+    @foreach ($result['photosTop'] as $album)
+        <a href="/album/{{ $album->id_album }}/{{ $album->album_name }}" class="mainContentPhoto col-sm-12 @if($album->albums_top == 1) col-md-8 @else col-md-4 @endif">
+            <img class="stylePhotos" src="{{ $album->image_path }}" >
+            <div class="contentNumberImage col-12 row">
+                <label class="numberImage col-12" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> {{ $album->number_photos }} imágenes</label>
+            </div>
+            <div class="contentInfoAlbum column">
+                <label class="titleAlbum col-sm-12">{{ $album->date }}</label>
+                <label class="titleAlbum col-sm-12">{{ $album->album_name }}</label>
+            </div>
+        </a>
+    @endforeach
 
-    <a href="/album/Conferencia de Prensa del Programa “La Corneta”" class="mainContentPhoto col-sm-12 col-md-4">
-        <img class="stylePhotos col-md-12" src="https://entrefam.com/wp-content/uploads/2023/02/ENTREFAM58376011_-960x1440.jpg" >
-        <div class="contentNumberImage col-12 row">
-            <label class="numberImage col-12" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> 10 imágenes</label>
-        </div>
-        <div class="contentInfoAlbum column">
-            <label class="titleAlbum col-sm-12">12 - 08 - 2023</label>
-            <label class="titleAlbum col-sm-12">Conferencia de Prensa del Programa “La Corneta”</label>
-        </div>
-    </a>
 
 </div>
 @include('web/galeria')

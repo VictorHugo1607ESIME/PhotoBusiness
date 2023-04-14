@@ -24,7 +24,7 @@ Route::get('/collections', [HomeController::class, 'collections'])->name('collec
 Route::get('/politicas', [HomeController::class, 'politicas'])->name('politicas');
 Route::get('/quienessomos', [HomeController::class, 'quienessomos'])->name('quienessomos');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::get('/album/{nameAlbum}', [HomeController::class, 'album'])->name('album');
+Route::get('/album/{idAlbum}/{nameAlbum}', [HomeController::class, 'album'])->name('album');
 Route::get('/comprar', [HomeController::class, 'comprar'])->name('comprar');
 Route::get('/myaccount', [HomeController::class, 'myaccount'])->name('mi cuenta');
 Route::get('/shoppingcart', [HomeController::class, 'shoppingcart'])->name('shoppingcart');
