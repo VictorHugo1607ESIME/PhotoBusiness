@@ -66,6 +66,7 @@
             }
             setInterval(get_images(id), 1000);
             let myDropzone = Dropzone("#dropzone", {
+                dictDefaultMessage: "Your default message Will work 100%",
                 addedfile: file => {
                     // ONLY DO THIS IF YOU KNOW WHAT YOU'RE DOING!
                 }

@@ -380,14 +380,28 @@ class ImagesController extends Controller
                 if ($imagen && file_exists(public_path($imagen->image_path))) {
                     unlink(public_path($imagen->image_path));
                 }
-                    DB::table('images')->where('id', $id)->delete();
-                    $table= $this->table_index();
-                    return response(['success' => true,'html'=>$table], 200);
+                DB::table('images')->where('id', $id)->delete();
+                $table = $this->table_index();
+                return response(['success' => true, 'html' => $table], 200);
             }
             return response(['success' => false], 404);
         } catch (\Throwable $th) {
             //throw $th;
             return response(['success' => false], 404);
+        }
+    }
+    public function info($id)
+    {
+        try {
+            $image = DB::table('images')
+                ->select('images.*', 'albums.album_name')
+                ->Join('albums', 'albums.id', '=', 'images.id_album', 'left outer')
+                ->where('images.id', $id)
+                ->first();
+            return view('admin.images.info')->with('image', $image);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return '';
         }
     }
 }

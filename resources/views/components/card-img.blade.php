@@ -18,7 +18,9 @@
                         </div>
                         <div class="col-2">
                             <div class="d-grid gap-1 mt-1">
-                                <a class="btn  btn-outline-primary" href="{{ url('/admin/images/edit', $id) }}">Info</a>
+                                {{-- <a class="btn  btn-outline-primary" href="{{ url('/admin/images/edit', $id) }}">Info</a> --}}
+                                <button type="submit" class="btn btn-outline-primary btn_modal_imagen"
+                                    data-id="{{ $id }}">Info</button>
                             </div>
                         </div>
                     </div>

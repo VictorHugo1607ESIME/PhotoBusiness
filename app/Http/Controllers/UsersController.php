@@ -87,20 +87,24 @@ class UsersController extends Controller
     }
     public function index()
     {
-        $result['users']=DB::table('users')->get();
-        return view('admin.users.index')->with('result',$result);
+        $result['users'] = DB::table('users')->get();
+        return view('admin.users.index')->with('result', $result);
     }
     public function add()
     {
-        $result=array();
-        return view('admin.users.add')->with('result',$result);
+        $result = array();
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Usuarios', 'url' => url('admin/users')]);
+        array_push($result['breadcrumb'], ['title' => ' Agregar Usuario', 'url' => url('admin/users/add')]);
+        return view('admin.users.add')->with('result', $result);
     }
     public function edit($id)
     {
-        $result=array();
-        $result['data']=DB::table('users')->where('id',$id)->first();
-        return view('admin.users.edit')->with('result',$result);
-
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Usuarios', 'url' => url('admin/users')]);
+        array_push($result['breadcrumb'], ['title' => ' Editar Usuario', 'url' => url('admin/users/edit', $id)]);
+        $result['data'] = DB::table('users')->where('id', $id)->first();
+        return view('admin.users.edit')->with('result', $result);
     }
 
     public function logout()
@@ -112,5 +116,75 @@ class UsersController extends Controller
             return redirect()->route('admin.login');
         }
         return Redirect('login');
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $modelUser = new User();
+            $request->validate([
+                'id' => 'required',
+            ]);
+            $user_id = $modelUser->edit($request->all());
+            if ($user_id) {
+                return redirect()->back()->with('success', true);
+            }
+            return redirect()->back()->with('error', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
+        }
+    }
+    public function update_pass(Request $request)
+    {
+        try {
+            $modelUser = new User();
+            $request->validate([
+                'id' => 'required',
+                'password' => 'required',
+                'password_rep' => 'required|same:password'
+            ]);
+            $user_id = $modelUser->change_pass($request->id, $request->password);
+            if ($user_id) {
+                return redirect()->back()->with('success', true);
+            }
+            return redirect()->back()->with('error', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
+        }
+    }
+    public function update_config(Request $request)
+    {
+        try {
+            $modelUser = new User();
+            $request->validate([
+                'id' => 'required',
+            ]);
+            $user_id = $modelUser->update_config($request->all());
+            if ($user_id) {
+                return redirect()->back()->with('success', true);
+            }
+            return redirect()->back()->with('error', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
+        }
+    }
+    public function insert(Request $request)
+    {
+        $modelUser = new User();
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+        $exists = DB::table('users')->where('email', trim($request->email))->first();
+        if (!$exists) {
+            $user_id = $modelUser->create($request->all());
+            if ($user_id) {
+                return redirect()->back()->with('success', true);
+            }
+        }
+        return redirect()->back()->with('error', true);
     }
 }

@@ -15,7 +15,7 @@
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
                         id="menu2">
                         <li>
-                            <a href="{{ URL('/admin/images') }}" class="nav-link px-0 align-middle">
+                            <a href="{{ URL('/admin/logout') }}" class="nav-link px-0 align-middle">
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i> <span
                                     class="ms-1 d-none d-sm-inline">Cerrar sesión</span></a>
                         </li>
