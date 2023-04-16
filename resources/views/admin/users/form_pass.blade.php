@@ -1,4 +1,4 @@
-<form action="{{ URL('/admin/users/update/pass') }}" method="POST">
+<form action="{{ URL('/admin/users/update_pass') }}" method="POST">
     <input type="hidden" name="id" value="{{ $result['data']->id }}">
     @csrf
     <div class="mb-3">

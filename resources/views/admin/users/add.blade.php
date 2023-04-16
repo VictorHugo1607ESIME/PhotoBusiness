@@ -30,7 +30,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Rol</label>
-                    <select class="form-control" name="role" id="role" required>
+                    <select class="form-control" name="role_id" id="role" required>
                         <option value="2">Usuario</option>
                         <option value="1">Administrador</option>
                     </select>
