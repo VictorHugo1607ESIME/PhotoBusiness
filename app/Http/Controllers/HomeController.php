@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Session;
+use Illuminate\Cookie\CookieJar;
 
 class HomeController extends Controller
 {
@@ -76,13 +77,36 @@ class HomeController extends Controller
         return view('web/album')->with('result', $result);;
     }
 
-    public function comprar(){
+    public function comprar($idAlbum, $idImage, Request $request){
         $result['title'] = 'Compara imágen';
         $result['description'] = 'Imágenes relacionadas';
-        $result['generalData'] = $this->generalData();
-        $result['isWideImage'] = false;
         $result['page'] = null;
         $result['isCoverPhoto'] = false;
+        $result['generalData'] = $this->generalData();
+        $result['generalData']['pageComprar'] = true;
+        $result['photo'] = $this->getImageForId($idImage);
+        $result['isWideImage'] = true;
+        $result['photos'] = $this->getImagesAlbum($idAlbum);
+        $result['photo']->image_info = json_decode($result['photo']->image_info);
+        $result['dataAlbum'] = $this->getDataAlbum($idAlbum);
+        $result['imageDimensions'] = new \stdClass();
+
+        if($result['photo']->image_with >= $result['photo']->image_height){
+            $smallWith = 594;
+            $smallHeight = 396;
+            $mediumWith = 1024;
+            $mediumHeight = 683;
+        }else{
+            $smallWith = 396;
+            $smallHeight = 594;
+            $mediumWith = 683;
+            $mediumHeight = 1024;
+        }
+        $result['imageDimensions']->smallWith = $smallWith;
+        $result['imageDimensions']->smallHeight = $smallHeight;
+        $result['imageDimensions']->mediumWith = $mediumWith;
+        $result['imageDimensions']->mediumHeight = $mediumHeight;
+
         return view('web/comprar_imagen')->with('result', $result);;
     }
 
@@ -105,6 +129,7 @@ class HomeController extends Controller
     function generalData(){
         $generalData['isLogin'] = session('isLogin');
         $generalData['hasExclusives'] = true;
+        $generalData['pageComprar'] = null;
         return $generalData;
     }
 
@@ -134,10 +159,22 @@ class HomeController extends Controller
         return back();
     }
 
+    function addPhotoCookies($idImage ,$requestWith, $requestHeight){
+        echo($idImage);
+        echo($requestWith);
+        echo($requestHeight);
+        $cookieJar = app(CookieJar::class);
+        $cookie = $cookieJar->make('idImagesSelected', json_encode($idImage));
+        $cookie = $cookieJar->make('idImagesSelected', json_encode($requestWith));
+        $cookie = $cookieJar->make('idImagesSelected', json_encode($requestHeight));
+
+        return back();
+    }
+
     function getAlbum($limit){
 
         $DBAlbum = DB::table('images')
-        ->select('images.id_album', 'images.image_path', 'image_with',
+        ->select('images.id', 'images.id_album', 'images.image_path', 'image_with',
         'image_height', 'albums.id', 'albums.album_name', 'albums.number_photos', 'albums.date')
         ->join('albums', 'images.id_album', '=', 'albums.id')
         ->distinct()->get();
@@ -155,7 +192,7 @@ class HomeController extends Controller
 
     function getAlbumsTop(){
         $DBAlbum = DB::table('images')
-        ->select('images.id_album', 'images.image_path', 'images.image_with',
+        ->select('images.id', 'images.id_album', 'images.image_path', 'images.image_with',
         'images.image_height', 'albums.id', 'albums.album_name', 'albums.number_photos', 'albums.date', 'albums.albums_top')
         ->join('albums', 'images.id_album', '=', 'albums.id')
         ->whereIn('albums.albums_top', [1, 2])
@@ -186,6 +223,18 @@ class HomeController extends Controller
 
     function getDataAlbum($idAlbum){
         $DBAlbum = DB::table('albums')->where('id', '=', $idAlbum)->first();
+        return $DBAlbum;
+    }
+
+    function getDataAlbumAndImagesFull(){
+        $DBAlbum = DB::table('images')
+        ->join('albums', 'images.id_album', '=', 'albums.id')
+        ->get();
+        return $DBAlbum;
+    }
+
+    function getImageForId($idImage){
+        $DBAlbum = DB::table('images')->where('id', '=', $idImage)->first();
         return $DBAlbum;
     }
 }

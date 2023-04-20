@@ -2,13 +2,22 @@
     <div class="col-12 mt-4 mb-4">
         <label class="titleSection col-12">{{ $result['description'] }}</label>
         @if(!$result['isCoverPhoto'])
-            <label class="dataSsection col-12" for="">{{ $result['dataAlbum']->date }}  ({{ $result['dataAlbum']->number_photos }} imágenes)</label>
+            <label class="dataSsection col-12" for="">{{ $result['dataAlbum']->date }}  ({{ count($result['photos']) }} imágenes)</label>
         @endif
     </div>
-    <div class="row d-flex justify-content-between">
+    <div class="row d-flex">
 
         @foreach ($result['photos'] as $image)
-        <a @if($result['isCoverPhoto']) href="/album/{{ $image->id_album }}/{{ $image->album_name }}" @else href="/comprar" target="_blank" @endif class="contentImgGeneral @if($image->image_with >= $image->image_height) contentImgWibe @else contentImgLong @endif ">
+        <a
+        @if($result['generalData']['pageComprar'])
+            onclick="selectImage({{json_encode($image)}})"
+        @else
+            @if($result['isCoverPhoto']) href="/album/{{ $image->id_album }}/{{ $image->album_name }}"
+            @else href="/comprar/{{ $image->id_album }}/{{ $image->id }}" target="_blank"
+            @endif
+        @endif
+        class="contentImgGeneral @if($image->image_with >= $image->image_height) contentImgWibe @else contentImgLong @endif ">
+
             <img class="imgAlbum" src="{{ $image->image_path }}" alt="">
             @if($result['isCoverPhoto'])
                 <div class="contentNumberImage col-12 row">

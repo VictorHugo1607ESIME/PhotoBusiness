@@ -25,10 +25,11 @@ Route::get('/politicas', [HomeController::class, 'politicas'])->name('politicas'
 Route::get('/quienessomos', [HomeController::class, 'quienessomos'])->name('quienessomos');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/album/{idAlbum}/{nameAlbum}', [HomeController::class, 'album'])->name('album');
-Route::get('/comprar', [HomeController::class, 'comprar'])->name('comprar');
+Route::get('/comprar/{idAlbum}/{idImage}', [HomeController::class, 'comprar'])->name('comprar');
 Route::get('/myaccount', [HomeController::class, 'myaccount'])->name('mi cuenta');
 Route::get('/shoppingcart', [HomeController::class, 'shoppingcart'])->name('shoppingcart');
 Route::get('/exclusives', [HomeController::class, 'exclusives'])->name('exclusives');
 Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
+Route::get('/addPhotoCookies/{idImage}/{requestWith}/{requestHeight}', [HomeController::class, 'addPhotoCookies'])->name('addPhotoCookies');
 
 Route::Post('/', [HomeController::class, 'login'])->name('login');
