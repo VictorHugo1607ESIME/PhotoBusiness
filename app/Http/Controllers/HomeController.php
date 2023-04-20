@@ -138,12 +138,19 @@ class HomeController extends Controller
         try {
             $dataUser = DB::table('users')->where('email', '=', $request->get('recipientEmail'))->first();
             if(isset($dataUser)){
-                $credentials = ['email' => trim($request->recipientEmail), "password" => trim($request->recipientPass)];
-                if (Auth::attempt($credentials)){
-                    session(["isLogin" => true]);
+                if($dataUser->users_online < $dataUser->users_max_online){
+                    $credentials = ['email' => trim($request->recipientEmail), "password" => trim($request->recipientPass)];
+                    if (Auth::attempt($credentials)){
+                        session(["isLogin" => true]);
+                        session(["dataUserSession" => $dataUser]);
+                        DB::table('users')->where('id', $dataUser->id)->update(['users_online'=>$dataUser->users_online+1]);
+                    }else{
+                        session(["isLogin" => false]);
+                    }
                 }else{
-                    session(["isLogin" => false]);
+                    echo("Has llegado al limite de usuarios seleccionados");
                 }
+
             }else{
                 $request->session()->put('isLogin', false);
             }
@@ -154,6 +161,17 @@ class HomeController extends Controller
     }
 
     function logout(){
+        $dataSession = session('dataUserSession');
+        try{
+            $data = DB::table('users')->where('id', '=', $dataSession->id)->first();
+            if(isset($data)){
+                if($data->users_online > 0){
+                   DB::table('users')->where('id', $dataSession->id)->update(['users_online'=>($data->users_online-1)]);
+                }
+            }
+        }catch(\Illuminate\Database\QueryException $ex) {
+            dd($ex->getMessage());
+        }
         Session::flush();
         Auth::logout();
         return back();
