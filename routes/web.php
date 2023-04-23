@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,4 +40,8 @@ Route::Post('/', [HomeController::class, 'login'])->name('login');
 Route::get('/users/{id}', function ($id) {
     $user = DB::table('users')->where('id', $id)->first();
     return response()->json($user);
+});
+
+Route::get('/phpinfo', function() {
+    return phpinfo();
 });
