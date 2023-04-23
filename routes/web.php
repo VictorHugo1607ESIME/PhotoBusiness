@@ -33,3 +33,8 @@ Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::get('/addPhotoCookies/{idImage}/{requestWith}/{requestHeight}', [HomeController::class, 'addPhotoCookies'])->name('addPhotoCookies');
 
 Route::Post('/', [HomeController::class, 'login'])->name('login');
+
+
+Route::get('/phpinfo', function() {
+    return phpinfo();
+});
