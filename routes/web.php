@@ -31,5 +31,12 @@ Route::get('/shoppingcart', [HomeController::class, 'shoppingcart'])->name('shop
 Route::get('/exclusives', [HomeController::class, 'exclusives'])->name('exclusives');
 Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::get('/addPhotoCookies/{idImage}/{requestWith}/{requestHeight}', [HomeController::class, 'addPhotoCookies'])->name('addPhotoCookies');
+Route::get('/updateDownUsersOnline', [HomeController::class, 'updateUsersOnline'])->name('updateUsersOnline');
+Route::get('/updateUpUsersOnline', [HomeController::class, 'updateUpUsersOnline'])->name('updateUpUsersOnline');
 
 Route::Post('/', [HomeController::class, 'login'])->name('login');
+
+Route::get('/users/{id}', function ($id) {
+    $user = DB::table('users')->where('id', $id)->first();
+    return response()->json($user);
+});

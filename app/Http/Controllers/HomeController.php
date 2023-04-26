@@ -142,6 +142,7 @@ class HomeController extends Controller
                     $credentials = ['email' => trim($request->recipientEmail), "password" => trim($request->recipientPass)];
                     if (Auth::attempt($credentials)){
                         session(["isLogin" => true]);
+                        session(["updateUsersOnline" => true]);
                         session(["dataUserSession" => $dataUser]);
                         DB::table('users')->where('id', $dataUser->id)->update(['users_online'=>$dataUser->users_online+1]);
                     }else{
@@ -161,20 +162,42 @@ class HomeController extends Controller
     }
 
     function logout(){
+        $this->updateDownUsersOnline();
+        Session::flush();
+        Auth::logout();
+        return back();
+    }
+
+    function updateDownUsersOnline(){
         $dataSession = session('dataUserSession');
         try{
             $data = DB::table('users')->where('id', '=', $dataSession->id)->first();
             if(isset($data)){
                 if($data->users_online > 0){
-                   DB::table('users')->where('id', $dataSession->id)->update(['users_online'=>($data->users_online-1)]);
+                    DB::table('users')->where('id', $dataSession->id)->decrement('users_online',1);
+                    $dataSession->users_online = $dataSession->users_online -1;
+                    session(["updateUsersOnline" => false]);
                 }
             }
         }catch(\Illuminate\Database\QueryException $ex) {
             dd($ex->getMessage());
         }
-        Session::flush();
-        Auth::logout();
-        return back();
+    }
+
+    function updateUpUsersOnline(){
+        $dataSession = session('dataUserSession');
+        try{
+            $data = DB::table('users')->where('id', '=', $dataSession->id)->first();
+            if(isset($data)){
+                if($dataUser->users_online < $dataUser->users_max_online){
+                    DB::table('users')->where('id', $dataSession->id)->increment('users_online',1);
+                    $dataSession->users_online = $dataSession->users_online+1;
+                    session(["updateUsersOnline" => true]);
+                }
+            }
+        }catch(\Illuminate\Database\QueryException $ex) {
+            dd($ex->getMessage());
+        }
     }
 
     function addPhotoCookies($idImage ,$requestWith, $requestHeight){
