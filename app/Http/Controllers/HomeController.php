@@ -139,7 +139,8 @@ class HomeController extends Controller
         return view('web/shoppingcart')->with('result', $result);
     }
 
-    public function generalData()
+
+    function generalData()
     {
         $generalData['isLogin'] = session('isLogin');
         $generalData['hasExclusives'] = true;
@@ -147,7 +148,8 @@ class HomeController extends Controller
         return $generalData;
     }
 
-    public function login(Request $request)
+
+    function login(Request $request)
     {
 
         try {
@@ -183,9 +185,9 @@ class HomeController extends Controller
         return back();
     }
 
-    // function updateDownUsersOnline(){
-    public function logout()
+    function updateDownUsersOnline()
     {
+
         $dataSession = session('dataUserSession');
         try {
             $data = DB::table('users')->where('id', '=', $dataSession->id)->first();
@@ -194,6 +196,7 @@ class HomeController extends Controller
                     DB::table('users')->where('id', $dataSession->id)->decrement('users_online', 1);
                     $dataSession->users_online = $dataSession->users_online - 1;
                     session(["updateUsersOnline" => false]);
+                    DB::table('users')->where('id', $dataSession->id)->update(['users_online' => ($data->users_online - 1)]);
                 }
             }
         } catch (\Illuminate\Database\QueryException $ex) {
@@ -232,6 +235,7 @@ class HomeController extends Controller
         // $cookie = $cookieJar->make('idImagesSelected', json_encode($requestWith));
         // $cookie = $cookieJar->make('idImagesSelected', json_encode($requestHeight));
         $download = $modelImage->download_img($idImage, $requestWith, $requestHeight);
+
         if ($download != false) {
             return response()->download($download);
         }

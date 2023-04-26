@@ -45,3 +45,7 @@ Route::get('/users/{id}', function ($id) {
 Route::get('/phpinfo', function() {
     return phpinfo();
 });
+
+Route::get('/phpinfo', function() {
+    return phpinfo();
+});
