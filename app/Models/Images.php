@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Libs\helpers;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use Image;
@@ -70,11 +71,23 @@ class Images extends Model
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-                $micarpeta = public_path('/temporalResize');
+                $micarpeta = public_path('/temporalResize/' . Auth::id());
                 if (!file_exists($micarpeta)) {
                     mkdir($micarpeta, 0777, true);
                 }
                 $image_resize->save($micarpeta . '/resize-' . $imagen->image_name, 100, 'jpg');
+
+                DB::table('downloads')->insertGetId([
+                    'id_image' => $idImage,
+                    'id_user' => Auth::id(),
+                    'download_with' => $requestWith,
+                    'download_height' => $requestHeight,
+                    'download_day' => date('d'),
+                    'downloads_moth' => date('m'),
+                    'download_year' => date('Y'),
+                    'created_at' => date('Y-m-d H:s:i'),
+                ]);
+
                 return $micarpeta . "/resize-" . $imagen->image_name;
             }
             return false;
