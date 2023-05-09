@@ -96,4 +96,33 @@ class Images extends Model
             return false;
         }
     }
+    public function moveImg($urlImg, $id_album)
+    {
+        try {
+            $album = DB::table('albums')->where('id', $id_album)->first();
+            $imagen = $urlImg;
+            $ruta = public_path("img/" . trim($album->album_slug)) . '/';
+            if (!file_exists($ruta)) {
+                mkdir($ruta, 0777, true);
+            }
+            $dataImagen = getimagesize($imagen);
+            $arrayName = explode("/", $imagen);
+            $nameImagen = $arrayName[count($arrayName) - 1];
+            $ruta_asset = "/img/" . trim($album->album_slug) . '/' . $nameImagen;
+            if (!empty($dataImagen)) {
+                try {
+                    $data = exif_read_data($imagen);
+                    $data =  (object)$data;
+                } catch (\Throwable $th) {
+                    $data = null;
+                }
+                // add($id_album, $images_path, $images_url, $with, $height, $type = 'photo', $info = null)
+                $set = $this->add($nameImagen, $album->id, $ruta_asset, asset($ruta_asset), $dataImagen[0], $dataImagen[1], 'photo', $data);
+                copy($imagen, $ruta . $nameImagen);
+                unlink($imagen);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
 }

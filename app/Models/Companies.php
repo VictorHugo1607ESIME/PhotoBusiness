@@ -9,7 +9,7 @@ use App\Libs\helpers;
 class Companies extends Model
 {
     use HasFactory;
-    public help;
+    public $help;
     public function __construct()
     {
         $this->help = new helpers();

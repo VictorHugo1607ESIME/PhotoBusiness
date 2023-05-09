@@ -18,9 +18,14 @@ class Albums extends Model
     public function add($name, $date = null, $cont = 0)
     {
         try {
+            $slug = $this->help->get_slug(trim($name));
+            $exist = DB::table('albums')->where('album_slug', $slug)->first();
+            if ($exist) {
+                return $exist->id;
+            }
             $insert_id = DB::table('albums')->insertGetId([
                 'album_name' => trim($name),
-                'album_slug' => $this->help->get_slug($name),
+                'album_slug' => $slug,
                 'album_status' => 'A',
                 'number_photos' => $cont,
                 'date' => $date,
