@@ -129,6 +129,7 @@ class AlbumsController extends Controller
             }
             return response(['success' => false], 404);
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             return response(['success' => false], 404);
         }
@@ -168,6 +169,31 @@ class AlbumsController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
             return redirect()->back()->with('error', true);
+        }
+    }
+    public function syncFTP($ruta = null, $id_album = 0)
+    {
+        if ($ruta == null) {
+            $ruta = public_path('upImg');
+        }
+        if (is_dir($ruta)) {
+            $gestor = opendir($ruta);
+
+            while (($archivo = readdir($gestor)) !== false) {
+                $ruta_completa = $ruta . "/" . $archivo;
+                if ($archivo != "." && $archivo != "..") {
+                    // Si es un directorio se recorre recursivamente
+                    if (is_dir($ruta_completa)) {
+                        ///si es carpeta
+                        $id_album = $this->albums->add($archivo);
+                        $this->syncFTP($ruta_completa, $id_album);
+                    } else {
+                        // si es arcvhivo
+                        $this->images->moveImg($ruta_completa, $id_album);
+                    }
+                }
+            }
+            closedir($gestor);
         }
     }
 }
