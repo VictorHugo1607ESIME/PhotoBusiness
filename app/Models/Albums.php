@@ -33,18 +33,21 @@ class Albums extends Model
             ]);
             return $insert_id;
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             return 0;
         }
     }
-    public function edit($id, $name, $date = null, $cont = 0)
+    public function edit($id, $name, $date = null, $album_keywords, $cont = 0)
     {
         try {
             $update = DB::table('albums')->where('id', $id)->update([
                 'album_name' => trim($name),
                 'album_slug' => $this->help->get_slug($name),
                 'album_status' => 'A',
-                'number_photos' => $cont,
+                // 'number_photos' => $cont,
+                'album_keywords' => trim($album_keywords),
+                'album_keywords_slug' => $this->keywords(trim($album_keywords)),
                 'date' => $date,
             ]);
             return $id;
@@ -52,6 +55,26 @@ class Albums extends Model
             //throw $th;
             return 0;
         }
+    }
+
+    public function keywords($text)
+    {
+        if ($text == null) {
+            return null;
+        }
+        try {
+            $aux = array();
+            $word = explode(',', $text);
+            foreach ($word as $item) {
+                if ($item != null) {
+                    array_push($aux, $this->help->get_slug($item));
+                }
+            }
+            return implode(",", $aux);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return null;
     }
 
     public function set_status($id)

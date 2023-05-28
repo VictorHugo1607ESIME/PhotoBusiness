@@ -1,7 +1,7 @@
 <div class="modal-body">
     <div class="row">
         <div class="col-6" style="width: 100%">
-            <img src="{{ asset($image->image_path) }}" alt="{{ $image->image_name }}" style="max-width: 100%">
+            <img src="{{ asset($image->optimice_path) }}" alt="{{ $image->image_name }}" style="max-width: 100%">
         </div>
     </div>
 </div>

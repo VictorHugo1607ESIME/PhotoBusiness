@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-center">
         <div class="col-12 col-sm-12 col-md-6">
             <h2 class="text-center">Editar de album {{ $result['album']->album_name }}</h2>
-            <form action="{{ URL('/admin/albums/insert') }}" method="POST">
+            <form action="{{ URL('/admin/albums/update') }}" method="POST">
                 @csrf
                 <input type="hidden" name="id" id="id_album" value="{{ $result['album']->id }}">
                 <div class="mb-3">
@@ -12,9 +12,14 @@
                         value="{{ $result['album']->album_name }}">
                 </div>
                 <div class="mb-3">
-                    <label for="album_date" class="form-label">Fecha de publicacion</label>
+                    <label for="album_date" class="form-label">Fecha de publicación</label>
                     <input type="date" class="form-control" id="date" name="date"
                         value="{{ $result['album']->date }}">
+                </div>
+                <div class="mb-3">
+                    <label for="album_keywords" class="form-label">Palabras claves (ejemplo, ejemplo 1, ejemplo 2, ......')</label>
+                    <input type="keywords" class="form-control" id="album_keywords" name="album_keywords"
+                        value="{{ $result['album']->album_keywords }}">
                 </div>
                 <div class="mb-3">
                     <label for="status" class="form-label">Estatus</label>
@@ -52,18 +57,7 @@
         $(document).ready(function() {
             let id = $('#id_album').val();
 
-            function get_images(id) {
-                $('#html_images').empty();
-                console.log('cargar..');
-                $.ajax({
-                    type: "get",
-                    url: "<?= url('/admin/albums/getImages_album/') ?>" + "/" + id,
-                    dataType: "html",
-                    success: function(res) {
-                        $('#html_images').html(res);
-                    }
-                });
-            }
+
             setInterval(get_images(id), 1000);
             let myDropzone = Dropzone("#dropzone", {
                 dictDefaultMessage: "Your default message Will work 100%",

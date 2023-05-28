@@ -32,11 +32,16 @@
                                         <div class="row">
                                             <div class="col">
                                                 <x-btn-edit url="{{ URL('/admin/albums/edit', base64_encode($item->id)) }}">
-                                                    Editar
+                                                    <i class="fa-solid fa-pen"></i>
                                                 </x-btn-edit>
                                             </div>
                                             <div class="col">
                                                 <x-top-album id="{{ $item->id }}" number="{{ $item->albums_top }}" />
+                                            </div>
+                                            <div class="col">
+                                                <x-btn-delete url="{{ URL('/admin/albums/delete', $item->id) }}">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </x-btn-delete>
                                             </div>
                                         </div>
                                     </td>

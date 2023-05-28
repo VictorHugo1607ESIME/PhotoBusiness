@@ -22,11 +22,12 @@ class AlbumsController extends Controller
         $result['breadcrumb'] = array();
         array_push($result['breadcrumb'], ['title' => 'Albums', 'url' => url('admin/albums')]);
         $result['albums'] = DB::table('albums')
-            ->select('albums.*', 'companies.company_name', DB::raw("count('images.id') as images_count"))
+            ->select('albums.*', 'companies.company_name', "number_photos as images_count")
             ->Join('companies', 'companies.id', '=', 'albums.company_id', 'left outer')
-            ->Join('images', 'images.id_album', '=', 'albums.id', 'left outer')
+            // ->Join('images', 'images.id_album', '=', 'albums.id', 'left outer')
             ->where('albums.album_status', 'A')
             ->groupBy('albums.id')
+            ->orderBy('albums.id', 'DESC')
             ->get();
         return view('admin.albums.index')->with('result', $result);
     }
@@ -64,7 +65,7 @@ class AlbumsController extends Controller
                 'name' => 'required',
                 'id' => 'required'
             ]);
-            $id = $this->albums->edit($request->id, $request->name, $request->date);
+            $id = $this->albums->edit($request->id, $request->name, $request->date,$request->album_keywords);
             return redirect()->back()->with('success', true);
         } catch (\Throwable $th) {
             //throw $th;
@@ -103,27 +104,36 @@ class AlbumsController extends Controller
     public function upImage(Request $request)
     {
         try {
+            $dataImagen = array();
             $album = DB::table('albums')->where('album_slug', trim($request->slug))->first();
-            if ($album && $request->hasFile("file")) {
+            if ($album && $request->file("file")) {
                 $imagen = $request->file("file");
                 $ruta = public_path("img/" . trim($request->slug)) . '/';
                 if (!file_exists($ruta)) {
                     mkdir($ruta, 0777, true);
                 }
-                $dataImagen = getimagesize($imagen->getRealPath());
+                chmod($ruta, 0777);
+                $dataImagen[0] = 0;
+                $dataImagen[1] = 0;
+                // $dataImagen = getimagesize(realpath($request->file("file")));
+                // dd($dataImagen);
                 $nameImagen = $imagen->getClientOriginalName();
                 $ruta_asset = "/img/" . trim($request->slug) . '/' . $nameImagen;
-
+                // copy(realpath($request->file("file")), $ruta . $nameImagen);
+                $request->file('file')->move($ruta, $nameImagen);
                 if (!empty($dataImagen)) {
+                    chmod(public_path($ruta_asset), 0777);
                     try {
-                        $data = exif_read_data($imagen->getRealPath());
+                        $data = exif_read_data(realpath($request->file("file")));
                         $data =  (object)$data;
                     } catch (\Throwable $th) {
                         $data = null;
                     }
                     // add($id_album, $images_path, $images_url, $with, $height, $type = 'photo', $info = null)
                     $set = $this->images->add($nameImagen, $album->id, $ruta_asset, asset($ruta_asset), $dataImagen[0], $dataImagen[1], 'photo', $data);
-                    copy($imagen->getRealPath(), $ruta . $nameImagen);
+                    if ($set > 0) {
+                        $this->images->optimice($set);
+                    }
                 }
                 return response(['success' => true], 200);
             }
@@ -134,6 +144,9 @@ class AlbumsController extends Controller
             return response(['success' => false], 404);
         }
     }
+
+
+
     public function getImages_album($id_album)
     {
         // dd($id_album);
@@ -173,27 +186,60 @@ class AlbumsController extends Controller
     }
     public function syncFTP($ruta = null, $id_album = 0)
     {
-        if ($ruta == null) {
-            $ruta = public_path('upImg');
-        }
-        if (is_dir($ruta)) {
-            $gestor = opendir($ruta);
-
-            while (($archivo = readdir($gestor)) !== false) {
-                $ruta_completa = $ruta . "/" . $archivo;
-                if ($archivo != "." && $archivo != "..") {
-                    // Si es un directorio se recorre recursivamente
-                    if (is_dir($ruta_completa)) {
-                        ///si es carpeta
-                        $id_album = $this->albums->add($archivo);
-                        $this->syncFTP($ruta_completa, $id_album);
-                    } else {
-                        // si es arcvhivo
-                        $this->images->moveImg($ruta_completa, $id_album);
-                    }
+        try {
+            if ($ruta == null) {
+                $ruta = public_path('upImg');
+                if (!file_exists($ruta)) {
+                    mkdir($ruta, 0777, true);
+                    chmod($ruta, 0777);
                 }
             }
-            closedir($gestor);
+            echo $ruta . '<br>';
+            if (is_dir($ruta)) {
+                $gestor = opendir($ruta);
+                while (($archivo = readdir($gestor)) !== false) {
+                    $ruta_completa = $ruta . "/" . $archivo;
+                    if ($archivo != "." && $archivo != "..") {
+                        // Si es un directorio se recorre recursivamente
+                        echo $archivo . '<br>';
+                        if (is_dir($ruta_completa)) {
+                            ///si es carpeta
+                            $id_album = $this->albums->add($archivo);
+                            $this->syncFTP($ruta_completa, $id_album);
+                        } else {
+                            // si es arcvhivo
+                            $this->images->moveImg($ruta_completa, $id_album);
+                        }
+                    }
+                }
+                closedir($gestor);
+                echo '<br>Archivos vacios';
+            }
+            sleep(5);
+            $ruta = public_path('upImg');
+            rmdir($ruta, true);
+            if (!file_exists($ruta)) {
+                mkdir($ruta, 0777, true);
+                chmod($ruta, 0777);
+            }
+        } catch (\Throwable $th) {
+            echo '<br> Error al realizar el proceso.';
+            //throw $th;
+        }
+        echo '<br> Proceso terminado';
+    }
+    public function delete_album($id)
+    {
+        try {
+            $exist = DB::table('albums')->where('id', $id)->get();
+            if ($exist) {
+                DB::table('albums')->where('id', $id)->delete();
+                return redirect()->back()->with('success', true);
+            }
+            return redirect()->back()->with('error', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
         }
     }
 }

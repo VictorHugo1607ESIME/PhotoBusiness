@@ -57,11 +57,13 @@ Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
     Route::get('/add', [AlbumsController::class, 'add']);
     Route::post('/insert', [AlbumsController::class, 'insert']);
     Route::get('/edit/{id}', [AlbumsController::class, 'edit']);
+    Route::post('/update', [AlbumsController::class, 'update']);
     Route::post('/upImage', [AlbumsController::class, 'upImage']);
     Route::get('/getImages_album/{id}', [AlbumsController::class, 'getImages_album']);
     Route::get('/top/{id}', [AlbumsController::class, 'top_html']);
     Route::post('/top/edit', [AlbumsController::class, 'top_edit']);
     Route::get('/syncFTP',[AlbumsController::class,'syncFTP']);
+    Route::get('/delete/{id}',[AlbumsController::class,'delete_album']);
 });
 
 Route::view('/contact', 'contact')->name('contact');

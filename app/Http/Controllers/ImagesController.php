@@ -9,6 +9,7 @@ use App\Models\Bitacora;
 use Illuminate\Support\Facades\DB;
 use File;
 use Storage;
+use App\Models\Images;
 
 class ImagesController extends Controller
 {
@@ -28,9 +29,9 @@ class ImagesController extends Controller
         return view('admin.images.index')->with('result', $result);
     }
 
-    public function table_index()
+    public function table_index($id_album = null)
     {
-        $images = DB::table('images')->orderBy('id', 'DESC')->get();
+        $images = DB::table('images')->where('id_album', $id_album)->orderBy('id', 'DESC')->get();
         return view('admin.albums.get_images')->with('images', $images)->render();
     }
 
@@ -380,8 +381,11 @@ class ImagesController extends Controller
                 if ($imagen && file_exists(public_path($imagen->image_path))) {
                     unlink(public_path($imagen->image_path));
                 }
+                if ($imagen && $imagen->optimice_path != null && file_exists(public_path($imagen->optimice_path))) {
+                    unlink(public_path($imagen->optimice_path));
+                }
                 DB::table('images')->where('id', $id)->delete();
-                $table = $this->table_index();
+                $table = $this->table_index($imagen->id_album);
                 return response(['success' => true, 'html' => $table], 200);
             }
             return response(['success' => false], 404);
@@ -400,8 +404,188 @@ class ImagesController extends Controller
                 ->first();
             return view('admin.images.info')->with('image', $image);
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             return '';
+        }
+    }
+    function get_iptc_data($image_path)
+    {
+        $return = array('title' => '', 'subject' => '', 'tags' => '');
+        $size = getimagesize($image_path, $info);
+
+        if (is_array($info)) {
+            $iptc = iptcparse($info["APP13"]);
+            // var_dump($iptc); // this will show all the data retrieved but I'm only concerned with a few 
+            $return['title'] = $iptc['2#005'][0];
+            $return['subject'] = $iptc['2#120'][0];
+            $return['tags'] = $iptc['2#025'];
+        }
+        return $return;
+    }
+
+    public function automatic_optimiceImage()
+    {
+        try {
+            $modelImage = new Images();
+            $image = DB::table('images')
+                ->where('images.optimice_path', null)
+                ->orderBy('id', 'DESC')
+                ->limit(5)
+                ->get();
+            if ($image) {
+                foreach ($image as $item) {
+                    var_dump($item->id);
+                    $new = $modelImage->optimice($item->id);
+                    var_dump('----' . $new . '<br>');
+                }
+            }
+            // return response(['success' => true], 200);
+        } catch (\Throwable $th) {
+            return response(['error' => true], 200);
+            //throw $th;
+        }
+    }
+    public function automatic_checkImage()
+    {
+        try {
+            $count = $image = DB::table('images')
+                ->where('checkImage', false)
+                ->count();
+            if ($count < 1) {
+                $image = DB::table('images')->update([
+                    'checkImage' => false
+                ]);
+            }
+            $images = $image = DB::table('images')
+                ->where('checkImage', false)
+                ->orderBy('id', 'DESC')
+                ->limit(25)
+                ->get();
+            foreach ($images as $item) {
+                var_dump('<br>' . $item->id);
+                if (!file_exists(public_path($item->image_path))) {
+                    DB::table('images')->where('id', $item->id)->delete();
+                    var_dump('--delete');
+                    continue;
+                }
+                if ($item->optimice_path != 1 && !file_exists(public_path($item->optimice_path))) {
+                    DB::table('images')->where('id', $item->id)->update([
+                        'optimice_path' => null
+                    ]);
+                    var_dump('--optimice null');
+                }
+                if ($item->id_album > 0) {
+                    $count = DB::table('images')->where('id_album', $item->id_album)->get()->count();
+                    DB::table('albums')->where('id', $item->id_album)->update(['number_photos' => $count]);
+                }
+                $this->getInfo($item->id);
+                DB::table('images')->where('id', $item->id)->update([
+                    'checkImage' => true
+                ]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function getInfo($id)
+    {
+        try {
+            $imagen = DB::table('images')->where('id', $id)->first();
+            if ($imagen->image_info == null || $imagen->image_with == 0 || $imagen->image_height == 0) {
+                $data = getimagesize(public_path($imagen->image_path), $i);
+                if ($data) {
+                    DB::table('images')->where('id', $id)->update([
+                        'image_with' => $data[0],
+                        'image_height' => $data[1],
+                    ]);
+                }
+                $info = exif_read_data(public_path($imagen->image_path), 0, true);
+                if ($info) {
+                    DB::table('images')->where('id', $id)->update([
+                        'image_info' => json_encode($info),
+                    ]);
+                }
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
+    public function automatic_check_folder($carpeta = null)
+    {
+        $this->reade_folder();
+        $folders = DB::table('temp_file')->where('type', 'folder')->orderBy('created_at', 'desc')->get();
+        if ($folders) {
+            foreach ($folders as $key => $folder) {
+                $this->reade_folder($folder->name, 'file', $folder->id);
+            }
+            $this->delete_folder_empty();
+        }
+    }
+
+    public function delete_folder_empty()
+    {
+        $thefolder = public_path('/upImg');
+        $folders = DB::table('temp_file')->where('type', 'folder')->where('count', 0)->get();
+        if ($folders) {
+            foreach ($folders as $key => $item) {
+                if (file_exists($thefolder . '/' . $item->name)) {
+                    if (!is_dir($thefolder . '/' . $item->name)) {
+                        mkdir($thefolder . '/' . $item->name);
+                    } else {
+                        rmdir($thefolder . '/' . $item->name);
+                    }
+                    DB::table('temp_file')->where('id', $item->id)->delete();
+                    DB::table('temp_file')->where('id_folder', $item->id)->delete();
+                }
+            }
+        }
+    }
+
+    public function reade_folder($folder = null, $type = 'folder', $id = 0)
+    {
+        if ($folder == null) {
+            $thefolder = public_path('/upImg');
+        } else {
+            $thefolder = public_path('/upImg/' . $folder);
+            if (!file_exists($thefolder)) {
+                return null;
+            }
+            // DB::table('temp_file')->where('id_folder',$id)->delete();
+        }
+        // chmod($thefolder, 0777);
+        if ($handler = opendir($thefolder)) {
+            while (false !== ($file = readdir($handler))) {
+                if ($file == '.' || $file == '..' || $file == '...') {
+                    continue;
+                }
+                // chmod($thefolder . '/' . $file, 0777);
+                if ($file == '.BridgeSort' || $file == '.DS_Store') {
+                    // dd($thefolder . '/' . $file);
+                    if (file_exists($thefolder . '/' . $file)) {
+                        unlink($thefolder . '/' . $file);
+                    }
+                    continue;
+                }
+                echo '<br>' . $file;
+                $exists = DB::table('temp_file')->where('name', $file)->where('type', $type)->first();
+                if (!$exists) {
+                    DB::table('temp_file')->insert([
+                        'name' => $file,
+                        'type' => $type,
+                        'ruta' => public_path($folder) . '/' . $file,
+                        'id_folder' => $id
+                    ]);
+                }
+            }
+            closedir($handler);
+        }
+        if ($id != 0) {
+            $count = DB::table('temp_file')->where('id_folder', $id)->count();
+            DB::table('temp_file')->where('id', $id)->update([
+                'count' => $count
+            ]);
         }
     }
 }

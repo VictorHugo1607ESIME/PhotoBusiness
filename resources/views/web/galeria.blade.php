@@ -2,7 +2,7 @@
     <div class="col-12 mt-4 mb-4">
         <label class="titleSection col-12">{{ $result['description'] }}</label>
         @if(!$result['isCoverPhoto'])
-            <label class="dataSsection col-12" for="">{{ $result['dataAlbum']->date }}  ({{ count($result['photos']) }} imágenes)</label>
+            <p class="dataSection col-12" for="">{{ $result['dataAlbum']->date }}  ({{ count($result['photos']) }} imágenes)</p>
         @endif
     </div>
     <div class="row d-flex">
@@ -18,7 +18,7 @@
         @endif
         class="contentImgGeneral @if($image->image_with >= $image->image_height) contentImgWibe @else contentImgLong @endif ">
 
-            <img class="imgAlbum" src="{{ $image->image_path }}" alt="">
+            <img class="imgAlbum" src="{{ $image->optimice_path }}" alt="" oncontextmenu="return false;">
             @if($result['isCoverPhoto'])
                 <div class="contentNumberImage col-12 row">
                     <label class="numberImage col-12" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> {{ $image->number_photos }} imágenes</label>
