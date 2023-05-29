@@ -96,6 +96,12 @@ class HomeController extends Controller
         $result['generalData'] = $this->generalData();
         $result['generalData']['pageComprar'] = true;
         $result['photo'] = $this->getImageForId($idImage);
+        $result['isWideImage'] = null;
+        if($result['photo']->image_height > $result['photo']->image_with){
+            $result['isWideImage'] = 0;
+        }else{
+            $result['isWideImage'] = 1;
+        }
         $result['isWideImage'] = true;
         $result['photos'] = $this->getImagesAlbum($idAlbum);
         $result['photo']->image_info = json_decode($result['photo']->image_info);
@@ -139,12 +145,64 @@ class HomeController extends Controller
         return view('web/shoppingcart')->with('result', $result);
     }
 
+    function addImageToCart(Request $request){
+        //dd($request);
+        try{
+
+            $response = ["status"=>"", "message"=>""];
+            $dataSession = session('dataUserSession');
+
+            if($request->input('idImage') == null){
+                $response['status'] = "Error";
+                $response['message'] = "No se mando parametro valido";
+
+                return $response;
+            }
+
+            $success = DB::table('downloads')->insert([
+                'id_image' => $request->idImage,
+                'id_album' => $request->idAlbum,
+                'id_user' => $dataSession->id,
+                'created_at' => date('Y-m-d H:i:s'),
+                'download_year' => date('Y'),
+                'downloads_moth' => date('m'),
+                'download_day' => date('d'),
+                'status' => 0
+            ]);
+
+            if($success){
+                $response['status'] = "Success";
+                $response['message'] = "La imagen se cargo exitosamente";
+                DB::table('users')->where('id', '=', $dataSession->id)->increment('download_numbers',1);
+            }else{
+                $response['status'] = "Error";
+                $response['message'] = $e->getMessage();
+            }
+            //dd($response);
+        }catch (\Exception $e) {
+            //dd($e->getMessage());
+            $response['status'] = "Error";
+            $response['message'] = $e->getMessage();
+            //dd($e);
+        }
+
+        return response([$response], 200);
+    }
+
 
     function generalData()
     {
         $generalData['isLogin'] = session('isLogin');
         $generalData['hasExclusives'] = true;
         $generalData['pageComprar'] = null;
+        $generalData['shoppingcart'] = session('shoppingcart');
+        $generalData['userDownloads'] = null;
+
+        if($generalData['isLogin']){
+            $dataSession = session('dataUserSession');
+            $generalData['userDownloads'] = DB::table('users')->where('id','=', $dataSession->id)->first();
+        }
+
         return $generalData;
     }
 
@@ -227,6 +285,7 @@ class HomeController extends Controller
     function addPhotoCookies($idImage, $requestWith, $requestHeight)
     {
         $modelImage = new Images();
+        $dataSession = session('dataUserSession');
         echo ($idImage);
         echo ($requestWith);
         echo ($requestHeight);
@@ -237,6 +296,7 @@ class HomeController extends Controller
         $download = $modelImage->download_img($idImage, $requestWith, $requestHeight);
 
         if ($download != false) {
+            DB::table('users')->where('id', '=', $dataSession->id)->increment('download_numbers',1);
             return response()->download($download);
         }
         return back();

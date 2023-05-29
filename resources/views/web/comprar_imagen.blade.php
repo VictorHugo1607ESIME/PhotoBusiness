@@ -40,10 +40,10 @@
 </style>
 @extends('layout.app')
 @section('content')
-    <h3 class="titleSection mt-4 mb-4 col-12">Carrito de compra</h3>
+    <h3 class="titleSection mt-4 mb-4 col-12">{{ $result['dataAlbum']->album_name }}</h3>
     <div class="row d-flex justify-content-between">
         <div class="col-md-7 d-flex justify-content-center align-items-start">
-            <div class="contentImage d-flex justify-content-center align-items-center @if($result['isWideImage']) col-12 @else col-7 @endif">
+            <div id="sizeImage" class="contentImage d-flex justify-content-center align-items-center @if($result['photo']->image_height > $result['photo']->image_with) col-8 @else col-12 @endif">
                 <img class="imgAlbumCarrito col-12" id="mainImage" src="{{ $result['photo']->image_path }}" alt="">
                 <div class="row contentLogo d-flex justify-content-center align-items-center">
                     <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca-agua.png') }}" alt=""></div>
@@ -71,8 +71,8 @@
                 <label class="form-check-label optionsText" for="flexRadioDefault3">&nbsp;&nbsp;Grande <label for="" id="imageWith">{{ $result['photo']->image_with }}</label> X <label for="" id="imageHeight">{{ $result['photo']->image_height }}</label></label>
             </div>
             <div class="col-12 mb-3 p-2">
-                <button onclick="addImageToCar()" class="col-11 btn btn-danger p-2 mb-3">Añadir al carrito</button>
-                <button onclick="addImageToCar()" class="col-11 btn btn-danger p-2">Descargar imágen</button>
+                <button onclick="@if($result['generalData']['isLogin']) @if($result['generalData']['userDownloads']->download_numbers <= $result['generalData']['userDownloads']->max_download_numbers) addImageToCart(true) @else limitToDownloads() @endif @else permissionDenied() @endif" class="col-11 btn btn-danger p-2 mb-3">Añadir al carrito</button>
+                <button onclick="@if($result['generalData']['isLogin']) @if($result['generalData']['userDownloads']->download_numbers <= $result['generalData']['userDownloads']->max_download_numbers) addImageToCart(false)@else limitToDownloads() @endif  @else permissionDenied() @endif" class="col-11 btn btn-danger p-2">Descargar imágen</button>
             </div>
             <h2 class="">Encabezado</h2>
             <h2 class="text-muted" id="id">ID: {{ $result['photo']->id }}</h2>
@@ -85,6 +85,14 @@
 <script>
     window.onload = initPage();
 
+    function permissionDenied(){
+        alert('Para descargar o guardar una imágen al carrito necesita iniciar sesión')
+    }
+
+    function limitToDownloads(){
+        alert('A llegado al límite de desacargas permitido')
+    }
+
     function selectImage(image){
 
         console.log("Select Image: "+image.id)
@@ -92,12 +100,18 @@
         let dimensionsSmall
         let dimensionsMedium
 
+        var imageContent = document.getElementById("sizeImage")
+        imageContent.classList.remove("col-12")
+        imageContent.classList.remove("col-8")
+
         if(parseInt(image.image_with) >= parseInt(image.image_height)){
             dimensionsSmall = "594 X 396"
             dimensionsMedium = "1024 X 683"
+            imageContent.classList.add("col-12");
         }else{
             dimensionsSmall = "396 X 594"
             dimensionsMedium = "683 X 1024"
+            imageContent.classList.add("col-8");
         }
 
         document.getElementById('mainImage').src = image.image_path
@@ -108,9 +122,14 @@
         document.getElementById('imageDescription').innerHTML = image.image_info.ImageDescription
         document.getElementById('dimensionsSmall').innerHTML = dimensionsSmall
         document.getElementById('dimensionsMedium').innerHTML = dimensionsMedium
+
         localStorage.setItem("idMainImage", JSON.stringify(image.id))
         localStorage.setItem("withMainImage", JSON.stringify(image.image_with))
         localStorage.setItem("heightMainImage", JSON.stringify(image.image_height))
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth" // Opcional: anima el desplazamiento
+        });
     }
 
     function selectImageForArrow(isNext){
@@ -130,7 +149,7 @@
         }
     }
 
-    function addImageToCar(){
+    function addImageToCart(addToCar){
         console.log("Start add image car")
         var radios = document.querySelectorAll('input[type=radio][name=flexRadioDefault]')
         const idCurrentImage = JSON.parse(localStorage.getItem("idMainImage"))
@@ -170,8 +189,33 @@
             }
         }
 
-        console.log("Data:  "+value+" "+requestWith+" "+requestHeight)
-        window.location.href = "{{ route('addPhotoCookies', [':idImage', ':requestWith', ':requestHeight']) }}".replace(':idImage', idCurrentImage).replace(':requestWith', requestWith).replace(':requestHeight', requestHeight);
+        if(addToCar){
+            let idPhoto = {!! $result['photo']->id !!}
+            let idAlbum = {!! $result['dataAlbum']->id !!}
+            console.log(idPhoto)
+            console.log(idAlbum)
+            let url = "/addImageToCart"
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                data: {
+                    idImage: idPhoto,
+                    idAlbum: idAlbum
+                },
+                success: function(response) {
+                    console.log(response);
+                    alert('Imagen añadida al carrito')
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }else{
+            console.log("Data:  "+value+" "+requestWith+" "+requestHeight)
+            window.location.href = "{{ route('addPhotoCookies', [':idImage', ':requestWith', ':requestHeight']) }}".replace(':idImage', idCurrentImage).replace(':requestWith', requestWith).replace(':requestHeight', requestHeight);
+        }
+
 
     }
 

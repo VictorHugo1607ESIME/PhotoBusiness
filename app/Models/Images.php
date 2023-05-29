@@ -14,11 +14,11 @@ use Image;
 class Images extends Model
 {
     use HasFactory;
-    public $help;
-    public function __construct()
-    {
-        $this->help = new helpers();
-    }
+    // public $help;
+    // public function __construct()
+    // {
+    //     $this->help = new helpers();
+    // }
     public function add($name, $id_album, $images_path, $images_url, $with, $height, $type = 'photo', $info = null)
     {
         try {
@@ -34,6 +34,10 @@ class Images extends Model
                 'image_info' => $info != null ? json_encode($info) : null,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
+            if ($id_album > 0) {
+                $count = DB::table('images')->where('id_album', $id_album)->get()->count();
+                DB::table('albums')->where('id', $id_album)->update(['number_photos' => $count]);
+            }
             return $insert_id;
         } catch (\Throwable $th) {
             //throw $th;
@@ -101,9 +105,15 @@ class Images extends Model
         try {
             $album = DB::table('albums')->where('id', $id_album)->first();
             $imagen = $urlImg;
+            chmod($imagen, 0777);
             $ruta = public_path("img/" . trim($album->album_slug)) . '/';
             if (!file_exists($ruta)) {
                 mkdir($ruta, 0777, true);
+            }
+            chmod($ruta, 0777);
+            if (!$this->esImagen($imagen)) {
+                unlink($imagen);
+                return false;
             }
             $dataImagen = getimagesize($imagen);
             $arrayName = explode("/", $imagen);
@@ -119,10 +129,48 @@ class Images extends Model
                 // add($id_album, $images_path, $images_url, $with, $height, $type = 'photo', $info = null)
                 $set = $this->add($nameImagen, $album->id, $ruta_asset, asset($ruta_asset), $dataImagen[0], $dataImagen[1], 'photo', $data);
                 copy($imagen, $ruta . $nameImagen);
+                $optimice = $this->optimice($set);
                 unlink($imagen);
             }
         } catch (\Throwable $th) {
             //throw $th;
         }
     }
+    public function optimice($id)
+    {
+        try {
+            $imagen = DB::table('images')->where('id', $id)->first();
+            if ($imagen && file_exists(public_path($imagen->image_path))) {
+                $image_resize = Image::make(public_path($imagen->image_path));
+                // $image_resize->encode('jpg', 30);
+                $micarpeta = public_path('/optimiceImg/');
+                if (!file_exists($micarpeta)) {
+                    mkdir($micarpeta, 0777, true);
+                }
+                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 25, 'jpg');
+                $optimice = DB::table('images')->where('id', $id)->update([
+                    'optimice_path' => '/optimiceImg/optimice-' . $imagen->image_name
+                ]);
+                chmod($micarpeta . '/optimice-' . $imagen->image_name, 0777);
+                return true;
+            }else{
+                $optimice = DB::table('images')->where('id', $id)->update([
+                    'optimice_path' => 1
+                ]);
+            }
+            return false;
+        } catch (\Throwable $th) {
+            return false;
+            //throw $th;
+        }
+    }
+
+    function esImagen($path)
+    {
+        $imageSizeArray = getimagesize($path);
+        $imageTypeArray = $imageSizeArray[2];
+        return (bool)(in_array($imageTypeArray, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP)));
+    }
+
+    
 }

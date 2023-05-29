@@ -61,7 +61,9 @@
 
     <script>
         $(document).ready(function() {
-            $('#myTable').DataTable();
+            $('#myTable').DataTable({
+                "ordering": false
+            });
             $(document).on('click', '.eliminarAlert', function() {
                 let id = $(this).data('id');
                 console.log(id);
@@ -91,9 +93,13 @@
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
                     deleteImagen(id);
+                    // get_images(id);
                 }
             })
         });
+
+        
+
         $(document).on('click', '.btn_modal_imagen', function() {
             let id = $(this).data('id');
             $('#div_info_imagen').empty();
@@ -146,15 +152,15 @@
                     }
                 }
             });
+            location.reload();
         }
 
         function cargando() {
             Swal.fire({
-                title: 'هل تريد الاستمرار؟',
-                icon: 'question',
-                iconHtml: '؟',
+                title: 'Cargando....',
                 showCancelButton: false,
-                showCloseButton: false
+                showCloseButton: false,
+                showConfirmButton: false
             })
         }
     </script>
