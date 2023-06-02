@@ -17,9 +17,17 @@
                         value="{{ $result['album']->date }}">
                 </div>
                 <div class="mb-3">
-                    <label for="album_keywords" class="form-label">Palabras claves (ejemplo, ejemplo 1, ejemplo 2, ......')</label>
+                    <label for="album_keywords" class="form-label">Palabras claves (ejemplo, ejemplo 1, ejemplo 2,
+                        ......')</label>
                     <input type="keywords" class="form-control" id="album_keywords" name="album_keywords"
                         value="{{ $result['album']->album_keywords }}">
+                </div>
+                <div class="mb-3">
+                    <label for="exclusive" class="form-label">Album exclusivo</label>
+                    <select class="form-select" aria-label="" name="exclusive" id="exclusive">
+                        <option value="0" {{ $result['album']->exclusive == '0' ? 'selected' : '' }}>No</option>
+                        <option value="1" {{ $result['album']->exclusive == '1' ? 'selected' : '' }}>Si</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="status" class="form-label">Estatus</label>
@@ -30,7 +38,6 @@
                         </option>
                     </select>
                 </div>
-
                 <div class="mb-3 text-center">
                     <x-btn-form></x-btn-form>
                 </div>

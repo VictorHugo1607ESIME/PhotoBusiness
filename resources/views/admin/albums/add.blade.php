@@ -14,6 +14,13 @@
                     <label for="album_date" class="form-label">Fecha de publicacion</label>
                     <input type="date" class="form-control" id="date" name="date">
                 </div>
+                <div class="mb-3">
+                    <label for="exclusive" class="form-label">Album exclusivo</label>
+                    <select class="form-select" aria-label="" name="exclusive" id="exclusive">
+                        <option value="false">No</option>
+                        <option value="true">Si</option>
+                    </select>
+                </div>
                 <div class="mb-3 text-center">
                     <x-btn-form></x-btn-form>
                 </div>

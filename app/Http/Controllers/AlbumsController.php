@@ -65,7 +65,11 @@ class AlbumsController extends Controller
                 'name' => 'required',
                 'id' => 'required'
             ]);
-            $id = $this->albums->edit($request->id, $request->name, $request->date,$request->album_keywords);
+
+            $id = $this->albums->edit($request->id, $request->name, $request->date, $request->album_keywords);
+            if (isset($request->exclusive)) {
+                $this->albums->album_exclusiva($id, $request->exclusive);
+            }
             return redirect()->back()->with('success', true);
         } catch (\Throwable $th) {
             //throw $th;
@@ -78,6 +82,9 @@ class AlbumsController extends Controller
                 'name' => 'required',
             ]);
             $id = $this->albums->add($request->name, isset($request->date) ? $request->date : null);
+            if (isset($request->exclusive) && $request->exclusive == "true") {
+                $this->albums->album_exclusiva($id, $request->exclusive);
+            }
             return redirect(url('admin/albums/edit', base64_encode($id)));
         } catch (\Throwable $th) {
             //throw $th;
@@ -240,6 +247,79 @@ class AlbumsController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
             return redirect()->back()->with('error', true);
+        }
+    }
+    public function index_exclusives()
+    {
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Albums', 'url' => url('admin/albums')]);
+        array_push($result['breadcrumb'], ['title' => 'Exlusivas', 'url' => url('admin/albums/exclusives')]);
+        $result['albums'] = DB::table('albums')
+            ->select('albums.*', 'companies.company_name')
+            ->Join('companies', 'companies.id', '=', 'albums.company_id', 'left outer')
+            // ->Join('images', 'images.id_album', '=', 'albums.id', 'left outer')
+            ->where('albums.exclusive', 1)
+            ->where('albums.album_status', 'A')
+            ->groupBy('albums.id')
+            ->orderBy('albums.id', 'DESC')
+            ->get();
+        return view('admin.albums.exclusives')->with('result', $result);
+    }
+    public function configure_exclusives($id)
+    {
+        $result['breadcrumb'] = array();
+        array_push($result['breadcrumb'], ['title' => 'Albums', 'url' => url('admin/albums')]);
+        array_push($result['breadcrumb'], ['title' => 'Exlusivas', 'url' => url('admin/albums/exclusives')]);
+        array_push($result['breadcrumb'], ['title' => 'Exlusivas configuración', 'url' => url('admin/albums/exclusives', $id)]);
+        $result['album'] = DB::table('albums')
+            ->select('albums.*', 'companies.company_name')
+            ->Join('companies', 'companies.id', '=', 'albums.company_id', 'left outer')
+            // ->Join('images', 'images.id_album', '=', 'albums.id', 'left outer')
+            ->where('albums.id', $id)
+            ->first();
+        $result['users'] = DB::table('users')->where('status', 'A')->get();
+
+        $result['users_exclusive'] = DB::table('albums_exclusive')
+            ->select('users.user_name', 'users.email', 'albums_exclusive.*')
+            ->leftJoin('users', 'users.id', 'albums_exclusive.user_id')
+            ->where('albums_exclusive.album_id', $id)
+            ->where('users.status', 'A')
+            ->get();
+        return view('admin.albums.configure_exclusive')->with('result', $result);
+    }
+
+    public function update_exclusive(Request $request)
+    {
+        try {
+            if (isset($request->ids)) {
+                foreach ($request->ids as  $value) {
+                    $exist = DB::table('albums_exclusive')->where('album_id', $request->id_album)->where('user_id', $value)->first();
+                    if (!$exist) {
+                        DB::table('albums_exclusive')->insertGetId([
+                            'album_id' => $request->id_album,
+                            'user_id' => $value
+                        ]);
+                    }
+                }
+                return redirect()->back()->with('success', true);
+            }
+            return redirect()->back()->with('error', true);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', true);
+        }
+    }
+    public function delete_exclusive($id = 0)
+    {
+        try {
+            if ($id != 0) {
+                DB::table('albums_exclusive')->where('id', $id)->delete();
+                return response(['success' => true], 200);
+            }
+            return response(['success' => false], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response(['success' => false], 200);
         }
     }
 }
