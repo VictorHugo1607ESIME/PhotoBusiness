@@ -15,6 +15,20 @@ class Albums extends Model
     {
         $this->help = new helpers();
     }
+
+    public function album_exclusiva($id, $exclusive)
+    {
+        try {
+            $id = DB::table('albums')->where('id', $id)->update([
+                'exclusive' => $exclusive == 'true' || $exclusive == true || $exclusive == 1 ? true : false
+            ]);
+            return true;
+        } catch (\Throwable $th) {
+            //throw $th;
+            return false;
+        }
+    }
+
     public function add($name, $date = null, $cont = 0)
     {
         try {

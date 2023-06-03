@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use File;
 use Storage;
 use App\Models\Images;
+use App\Models\Albums;
 
 class ImagesController extends Controller
 {
@@ -568,7 +569,7 @@ class ImagesController extends Controller
                     }
                     continue;
                 }
-                echo '<br>' . $file;
+                // echo '<br>' . $file;
                 $exists = DB::table('temp_file')->where('name', $file)->where('type', $type)->first();
                 if (!$exists) {
                     DB::table('temp_file')->insert([
@@ -586,6 +587,64 @@ class ImagesController extends Controller
             DB::table('temp_file')->where('id', $id)->update([
                 'count' => $count
             ]);
+        }
+    }
+    public function automatic_sync()
+    {
+        try {
+            $modelAlbums = new Albums();
+            $path = public_path('img');
+            $tem_path = public_path('upImg');
+            $folder = DB::table('temp_file')->where('type', 'folder')
+                ->where('count', '!=', 0)
+                ->orderBy('count', 'DESC')
+                ->first();
+            if ($folder) {
+                if (!is_dir($path . '/' . $folder->name)) {
+                    mkdir($path . '/' . $folder->name, 0777, true);
+                }
+                $album = $modelAlbums->add($folder->name);
+                $archivos = DB::table('temp_file')->where('id_folder', $folder->id)->limit(5)->get();
+                foreach ($archivos as $item) {
+                    $exists = DB::table('images')->where('image_name', $item->name)->first();
+                    if (!$exists) {
+                        $id = DB::table('images')->insertGetId([
+                            'id_album' => $album,
+                            'image_name' => $item->name,
+                            'image_path' => '/img/' . $folder->name . '/' . $item->name,
+                            'image_url' => public_path('/img/' . $folder->name . '/' . $item->name)
+                        ]);
+                        copy($tem_path . '/' . $folder->name . '/' . $item->name, $path . '/' . $folder->name . '/' . $item->name);
+                        $this->getInfo($id);
+                    }
+                    // echo '<br>' . $item->name;
+                    DB::table('temp_file')->where('id', $item->id)->delete();
+                    unlink($tem_path . '/' . $folder->name . '/' . $item->name);
+                }
+                $count = DB::table('temp_file')->where('id_folder', $folder->id)->count();
+                DB::table('temp_file')->where('id', $folder->id)->update([
+                    'count' => $count
+                ]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function sync_manual()
+    {
+        try {
+            $file = 0;
+            $files = DB::table('temp_file')->where('type', 'file')
+                ->count();
+            if ($files > 0) {
+                $this->automatic_sync();
+                return response(['success' => true, 'code' => 200]);
+            }
+            $this->reade_folder();
+            return response(['success' => false, 'code' => 404]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response(['success' => false, 'code' => 404]);
         }
     }
 }

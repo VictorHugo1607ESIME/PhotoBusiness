@@ -44,14 +44,16 @@ Route::get('/users/{id}', function ($id) {
     return response()->json($user);
 });
 Route::group(['prefix' => '/automatic', 'as' => 'admin'], function () {
-    Route::get('/optimiceImage',[ImagesController::class,'automatic_optimiceImage']);
-    Route::get('/checkImage',[ImagesController::class,'automatic_checkImage']);
-    Route::get('/checkFolder',[ImagesController::class,'automatic_check_folder']);
+    Route::get('/optimiceImage', [ImagesController::class, 'automatic_optimiceImage']);
+    Route::get('/checkImage', [ImagesController::class, 'automatic_checkImage']);
+    Route::get('/checkFolder', [ImagesController::class, 'automatic_check_folder']);
+    Route::get('/sync', [ImagesController::class, 'automatic_sync']);
 });
-Route::get('/phpinfo', function() {
+Route::get('/sync_manual', [ImagesController::class, 'sync_manual']);
+Route::get('/phpinfo', function () {
     return phpinfo();
 });
 
-Route::get('/phpinfo', function() {
+Route::get('/phpinfo', function () {
     return phpinfo();
 });

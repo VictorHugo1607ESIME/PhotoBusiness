@@ -147,7 +147,7 @@ class Images extends Model
                 if (!file_exists($micarpeta)) {
                     mkdir($micarpeta, 0777, true);
                 }
-                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 25, 'jpg');
+                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 15, 'jpg');
                 $optimice = DB::table('images')->where('id', $id)->update([
                     'optimice_path' => '/optimiceImg/optimice-' . $imagen->image_name
                 ]);

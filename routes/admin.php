@@ -62,8 +62,12 @@ Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
     Route::get('/getImages_album/{id}', [AlbumsController::class, 'getImages_album']);
     Route::get('/top/{id}', [AlbumsController::class, 'top_html']);
     Route::post('/top/edit', [AlbumsController::class, 'top_edit']);
-    Route::get('/syncFTP',[AlbumsController::class,'syncFTP']);
-    Route::get('/delete/{id}',[AlbumsController::class,'delete_album']);
+    Route::get('/syncFTP', [AlbumsController::class, 'syncFTP']);
+    Route::get('/delete/{id}', [AlbumsController::class, 'delete_album']);
+    Route::get('/exclusives', [AlbumsController::class, 'index_exclusives']);
+    Route::get('/exclusives/{id}', [AlbumsController::class, 'configure_exclusives']);
+    Route::post('/update/exclusive', [AlbumsController::class, 'update_exclusive']);
+    Route::get('/exclusives/delete/{id}', [AlbumsController::class, 'delete_exclusive']);
 });
 
 Route::view('/contact', 'contact')->name('contact');

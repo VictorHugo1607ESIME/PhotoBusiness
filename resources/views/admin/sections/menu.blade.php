@@ -16,6 +16,10 @@
         <a href="{{ URL('/admin/albums') }}" class="nav-link px-0 align-middle">
             <i class="fa-regular fa-folder-open"></i> <span class="ms-1 d-none d-sm-inline">Albums</span></a>
     </li>
+    <li>
+        <a href="{{ URL('/admin/albums/exclusives') }}" class="nav-link px-0 align-middle">
+            <i class="fa-solid fa-folder-plus"></i> <span class="ms-1 d-none d-sm-inline">Albums exclusivos</span></a>
+    </li>
     {{-- <li>
         <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
             <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>
