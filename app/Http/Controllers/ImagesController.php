@@ -12,6 +12,8 @@ use Storage;
 use App\Models\Images;
 use App\Models\Albums;
 
+use PHPExiftool\Reader;
+
 class ImagesController extends Controller
 {
     /**
@@ -26,7 +28,7 @@ class ImagesController extends Controller
         if (session('user_id') == 30) {
             return redirect('/products')->with('alert', true);
         }
-        $result['images'] = DB::table('images')->orderBy('id', 'DESC')->get();
+
         return view('admin.images.index')->with('result', $result);
     }
 
@@ -450,49 +452,65 @@ class ImagesController extends Controller
     public function automatic_checkImage()
     {
         try {
-            $count = $image = DB::table('images')
-                ->where('checkImage', false)
-                ->count();
-            if ($count < 1) {
-                $image = DB::table('images')->update([
-                    'checkImage' => false
-                ]);
-            }
-            $images = $image = DB::table('images')
-                ->where('checkImage', false)
-                ->orderBy('id', 'DESC')
-                ->limit(25)
-                ->get();
-            foreach ($images as $item) {
-                var_dump('<br>' . $item->id);
-                if (!file_exists(public_path($item->image_path))) {
-                    DB::table('images')->where('id', $item->id)->delete();
-                    var_dump('--delete');
-                    continue;
-                }
-                if ($item->optimice_path != 1 && !file_exists(public_path($item->optimice_path))) {
-                    DB::table('images')->where('id', $item->id)->update([
-                        'optimice_path' => null
-                    ]);
-                    var_dump('--optimice null');
-                }
-                if ($item->id_album > 0) {
-                    $count = DB::table('images')->where('id_album', $item->id_album)->get()->count();
-                    DB::table('albums')->where('id', $item->id_album)->update(['number_photos' => $count]);
-                }
-                $this->getInfo($item->id);
-                DB::table('images')->where('id', $item->id)->update([
-                    'checkImage' => true
-                ]);
-            }
+            
+
+$imagePath = 'ruta/a/la/imagen.jpg'; // Ruta de la imagen que deseas obtener el título
+
+$exifTool = new Reader();
+$metadata = $exifTool->getImageMetadata($imagePath);
+
+if (isset($metadata['Title'])) {
+    $title = $metadata['Title'];
+    echo $title;
+} else {
+    echo 'No se encontró el título en los metadatos de la imagen.';
+}
+            // $count = $image = DB::table('images')
+            //     ->where('checkImage', false)
+            //     ->count();
+            // if ($count < 1) {
+            //     $image = DB::table('images')->update([
+            //         'checkImage' => false
+            //     ]);
+            // }
+            // $images = $image = DB::table('images')
+            //     ->where('checkImage', false)
+            //     ->orderBy('id', 'DESC')
+            //     ->limit(25)
+            //     ->get();
+            // foreach ($images as $item) {
+            //     var_dump('<br>' . $item->id);
+            //     if (!file_exists(public_path($item->image_path))) {
+            //         DB::table('images')->where('id', $item->id)->delete();
+            //         var_dump('--delete');
+            //         continue;
+            //     }
+            //     if ($item->optimice_path != 1 && !file_exists(public_path($item->optimice_path))) {
+            //         DB::table('images')->where('id', $item->id)->update([
+            //             'optimice_path' => null
+            //         ]);
+            //         var_dump('--optimice null');
+            //     }
+            //     if ($item->id_album > 0) {
+            //         $count = DB::table('images')->where('id_album', $item->id_album)->get()->count();
+            //         DB::table('albums')->where('id', $item->id_album)->update(['number_photos' => $count]);
+            //     }
+            //     $this->getInfo($item->id);
+            //     DB::table('images')->where('id', $item->id)->update([
+            //         'checkImage' => true
+            //     ]);
+            // }
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
         }
     }
     public function getInfo($id)
     {
         try {
+            $modelo = new Images();
             $imagen = DB::table('images')->where('id', $id)->first();
+            $modelo->get_titule(public_path($imagen->image_path));
             if ($imagen->image_info == null || $imagen->image_with == 0 || $imagen->image_height == 0) {
                 $data = getimagesize(public_path($imagen->image_path), $i);
                 if ($data) {
@@ -509,6 +527,7 @@ class ImagesController extends Controller
                 }
             }
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
         }
     }

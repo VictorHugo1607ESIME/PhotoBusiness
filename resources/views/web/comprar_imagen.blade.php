@@ -32,7 +32,7 @@
 .arrowsImages{
     cursor: pointer;
     opacity: .7;
-    padding: 16px;
+    padding: 10px;
     background-color: rgba(150, 150, 150, .9);
     border: 5px
 }
@@ -44,15 +44,15 @@
     <div class="row d-flex justify-content-between">
         <div class="col-md-7 d-flex justify-content-center align-items-start">
             <div id="sizeImage" class="contentImage d-flex justify-content-center align-items-center @if($result['photo']->image_height > $result['photo']->image_with) col-8 @else col-12 @endif">
-                <img class="imgAlbumCarrito col-12" id="mainImage" src="{{ $result['photo']->image_path }}" alt="">
+                <img class="imgAlbumCarrito col-12" id="mainImage" src="@if(@result['photo']->optimice_path != null) {{ $result['photo']->optimice_path }} @else {{ $result['photo']->image_path }} @endif" alt="">
                 <div class="row contentLogo d-flex justify-content-center align-items-center">
                     <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca-agua.png') }}" alt=""></div>
                     <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca-agua.png') }}" alt=""></div>
                     <div class="@if($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12" src="{{ asset('images/marca-agua.png') }}" alt=""></div>
                 </div>
                 <div class="btnButtonsNextAndBefore d-flex justify-content-between">
-                    <div class="col-1 d-flex align-items-center"><img onclick="selectImageForArrow(false)" class="arrowsImages rounded" src="{{ asset('icons/flecha-izquierda.png') }}" alt=""></div>
-                    <div class="col-1 d-flex align-items-center"><img onclick="selectImageForArrow(true)" class="arrowsImages rounded" src="{{ asset('icons/flecha-correcta.png') }}" alt=""></div>
+                    <div class="d-flex align-items-center"><img onclick="selectImageForArrow(false)" class="arrowsImages rounded" src="{{ asset('icons/flecha-izquierda.png') }}" alt=""></div>
+                    <div class="d-flex align-items-center"><img onclick="selectImageForArrow(true)" class="arrowsImages rounded" src="{{ asset('icons/flecha-correcta.png') }}" alt=""></div>
                 </div>
             </div>
         </div>
@@ -71,13 +71,13 @@
                 <label class="form-check-label optionsText" for="flexRadioDefault3">&nbsp;&nbsp;Grande <label for="" id="imageWith">{{ $result['photo']->image_with }}</label> X <label for="" id="imageHeight">{{ $result['photo']->image_height }}</label></label>
             </div>
             <div class="col-12 mb-3 p-2">
-                <button onclick="@if($result['generalData']['isLogin']) @if($result['generalData']['userDownloads']->download_numbers <= $result['generalData']['userDownloads']->max_download_numbers) addImageToCart(true) @else limitToDownloads() @endif @else permissionDenied() @endif" class="col-11 btn btn-danger p-2 mb-3">Añadir al carrito</button>
-                <button onclick="@if($result['generalData']['isLogin']) @if($result['generalData']['userDownloads']->download_numbers <= $result['generalData']['userDownloads']->max_download_numbers) addImageToCart(false)@else limitToDownloads() @endif  @else permissionDenied() @endif" class="col-11 btn btn-danger p-2">Descargar imágen</button>
+                <button onclick="@if($result['generalData']['isLogin']) acceptAddImageOrDeniedImage({!!$result['generalData']['userData']->max_download_numbers!!}, true) @else permissionDenied() @endif" class="col-11 btn btn-danger p-2 mb-3">Añadir al carrito</button>
+                <button onclick="@if($result['generalData']['isLogin']) acceptAddImageOrDeniedImage({!!$result['generalData']['userData']->max_download_numbers!!}, false) @else permissionDenied() @endif" class="col-11 btn btn-danger p-2">Descargar imágen</button>
             </div>
             <h2 class="">Encabezado</h2>
             <h2 class="text-muted" id="id">ID: {{ $result['photo']->id }}</h2>
             <h4 class="text-muted" id="date">Fecha: {{ $result['photo']->created_at }}</h4>
-            <p class="text-muted mt-5 mb-5" id="imageDescription">{{ $result['photo']->image_info->ImageDescription }}</p>
+            <p class="text-muted mt-5 mb-5" id="imageDescription">@if(isset($result['photo']->image_info->ImageDescription)){{ $result['photo']->image_info->ImageDescription }} @else {{ $result['photo']->image_info->IFD0->ImageDescription }} @endif</p>
         </div>
     </div>
     @include('web/galeria')
@@ -91,6 +91,17 @@
 
     function limitToDownloads(){
         alert('A llegado al límite de desacargas permitido')
+    }
+
+    function acceptAddImageOrDeniedImage(maxNumberImage, optionOperation){
+        var numberImageDown = JSON.parse(localStorage.getItem("numberImageCar"))
+        console.log(numberImageDown + " " + maxNumberImage + " " + optionOperation)
+        
+        if(numberImageDown < maxNumberImage){
+            addImageToCart(optionOperation)
+        }else{
+            limitToDownloads()
+        }
     }
 
     function selectImage(image){
@@ -206,6 +217,11 @@
                 success: function(response) {
                     console.log(response);
                     alert('Imagen añadida al carrito')
+                    const numberImageDown = JSON.parse(localStorage.getItem("numberImageCar"))
+                    const NewnumberImageDown = numberImageDown + 1
+                    localStorage.setItem("numberImageCar", JSON.stringify(NewnumberImageDown))
+
+                    //var numberCar = document.getElementById('numberImageCar').textContent = numberImageDown
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
@@ -213,15 +229,73 @@
             });
         }else{
             console.log("Data:  "+value+" "+requestWith+" "+requestHeight)
-            window.location.href = "{{ route('addPhotoCookies', [':idImage', ':requestWith', ':requestHeight']) }}".replace(':idImage', idCurrentImage).replace(':requestWith', requestWith).replace(':requestHeight', requestHeight);
+            //window.location.href = "{{ route('addPhotoCookies', [':idImage', ':requestWith', ':requestHeight']) }}".replace(':idImage', idCurrentImage).replace(':requestWith', requestWith).replace(':requestHeight', requestHeight);
+            const numberImageDown = JSON.parse(localStorage.getItem("numberImageCar"))
+            const NewnumberImageDown = numberImageDown + 1
+            localStorage.setItem("numberImageCar", JSON.stringify(NewnumberImageDown))
+
+
+            var url = "{{ route('addPhotoCookies', ['idImage' => ':idImage', 'requestWith' => ':requestWith', 'requestHeight' => ':requestHeight']) }}";
+            url = url.replace(':idImage', idCurrentImage).replace(':requestWith', requestWith).replace(':requestHeight', requestHeight);
+            console.log(url)
+
+            new Promise((resolver, rechazar) => {
+                console.log('Inicial');
+                window.location.href = url
+                resolver();
+            })
+            .then(() => {
+                alert("Imágen descargada exitosamente")
+                console.log('Haz esto');
+            })
+            .catch(() => {
+                console.log('Haz aquello');
+                alert("Error al descargar la imágen")
+            })
+
+
+            /*$.ajax({
+                url: url, // Reemplaza 'ruta-del-controlador' por la URL del controlador Laravel
+                type: 'GET', // Cambia 'POST' por el método HTTP que corresponda (GET, POST, PUT, DELETE, etc.)
+                headers: {
+                    'Content-Description': 'File Transfer',
+                    'contentType': 'image/jpg'
+                },
+                success: function() {
+                     // Código a ejecutar cuando la petición sea exitosa
+                    console.log();
+                },
+                error: function(xhr) {
+                     // Código a ejecutar si hay algún error en la petición
+                    console.log("Error::: "+xhr.responseText);
+                }
+            });*/
+            /*fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'image/jpg'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Error en la petición');
+                }
+                return response.json();
+            })
+            .then(function(responseData) {
+                console.log("Response::: "+responseData);
+            })
+            .catch(function(error) {
+                console.error("ErrorCatch::: "+error);
+            });*/
         }
-
-
     }
 
     function initPage(){
+        var numberImageCar = {!! $result['generalData']['numberImageDownloadsUser'] !!}
         localStorage.setItem("ListImages", JSON.stringify({!! $result['photos'] !!}))
         localStorage.setItem("idMainImage", JSON.stringify({!! $result['photo']->id !!}))
+        localStorage.setItem("numberImageCar", JSON.stringify(numberImageCar))
         localStorage.setItem("withMainImage", JSON.stringify({!! $result['photo']->image_with !!}))
         localStorage.setItem("heightMainImage", JSON.stringify({!! $result['photo']->image_height !!}))
     }

@@ -20,8 +20,8 @@
     @foreach ($result['photosTop'] as $album)
         <a href="/album/{{ $album->id_album }}/{{ $album->album_name }}" class="mainContentPhoto col-sm-12 @if($album->albums_top == 1) col-md-8 @else col-md-4 @endif">
             <img class="stylePhotos" src="{{ $album->image_path }}" oncontextmenu="return false">
-            <div class="contentNumberImage col-12 row">
-                <label class="numberImage col-12" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> {{ $album->number_photos }} imágenes</label>
+            <div class="contentNumberImage row">
+                <label class="numberImage" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> {{ $album->number_photos }} imágenes</label>
             </div>
             <div class="contentInfoAlbum column">
                 <label class="titleAlbum col-sm-12">{{ $album->date }}</label>

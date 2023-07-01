@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
     <script src="{{ asset('fontawesome\js\all.min.js') }}"></script>
+    <livewire:styles />
     @include('admin.sections.css')
     @yield('css')
     <title>@yield('title')</title>
@@ -31,7 +32,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="mdalImagenLabel">Información de imagen</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" style="color: black" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div id="div_info_imagen">
                 </div>
@@ -58,7 +60,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
+    <livewire:scripts />
     <script>
         $(document).ready(function() {
             $('#myTable').DataTable({
@@ -98,7 +100,7 @@
             })
         });
 
-        
+
 
         $(document).on('click', '.btn_modal_imagen', function() {
             let id = $(this).data('id');
@@ -163,6 +165,20 @@
                 showConfirmButton: false
             })
         }
+    </script>
+    <script>
+        Livewire.emit('success', () => {
+            Toast.fire({
+                icon: 'success',
+                title: 'Proceso realizado'
+            })
+        });
+        Livewire.emit('error', () => {
+            Toast.fire({
+                icon: 'error',
+                title: 'Proceso no se realizo'
+            })
+        });
     </script>
     @yield('js')
     @stack('scripts')

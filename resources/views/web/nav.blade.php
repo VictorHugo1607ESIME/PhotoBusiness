@@ -26,7 +26,7 @@
             @endif
         </div>
         <div class="col-4 d-flex justify-content-end align-items-center">
-            <a class="@if($result['generalData']['isLogin']) mx-3 @endif text-dark" href="shoppingcart">(1) <img src="{{ asset('icons/carrito-de-compras.png') }}"></a>
+            <a class="@if($result['generalData']['isLogin']) mx-3 @endif text-dark" href="shoppingcart">(0) <img src="{{ asset('icons/carrito-de-compras.png') }}"></a>
             @if($result['generalData']['isLogin'])
                 <a class="" href="/myaccount"><img src="{{ asset('icons/cuenta.png') }}"></a>
                 <a class="text-danger mx-2" href="/logout">Cerrar Sesión</a>

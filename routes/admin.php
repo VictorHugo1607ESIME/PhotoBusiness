@@ -30,7 +30,7 @@ Route::get('/dashboard', [IndexController::class, 'dashboard'])->name('admin.das
 Route::get('logout', [UsersController::class, 'logout']);
 //login
 
-Route::group(['prefix' => '/images', 'as' => 'admin', 'middleware' => ['authAdmin']], function () {
+Route::group(['prefix' => '/images', 'middleware' => ['authAdmin']], function () {
     Route::get('/', [ImagesController::class, 'index']);
     Route::post('/upImage', [ImagesController::class, 'upImage']);
     Route::get('/deleted/{id}', [ImagesController::class, 'deleted']);
@@ -39,7 +39,7 @@ Route::group(['prefix' => '/images', 'as' => 'admin', 'middleware' => ['authAdmi
 Route::get('/', function () {
     dd('hola');
 });
-Route::group(['prefix' => '/users', 'as' => 'admin', 'middleware' => ['authAdmin']], function () {
+Route::group(['prefix' => '/users', 'middleware' => ['authAdmin']], function () {
     Route::get('/', [UsersController::class, 'index']);
     Route::get('/add', [UsersController::class, 'add']);
     Route::post('/insert', [UsersController::class, 'insert']);
@@ -50,9 +50,9 @@ Route::group(['prefix' => '/users', 'as' => 'admin', 'middleware' => ['authAdmin
     Route::post('/update_pass', [UsersController::class, 'update_pass']);
 });
 
-Route::group(['prefix' => '/companies', 'as' => 'admin', 'middleware' => ['authAdmin']], function () {
+Route::group(['prefix' => '/companies', 'middleware' => ['authAdmin']], function () {
 });
-Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
+Route::group(['prefix' => '/albums'], function () {
     Route::get('/', [AlbumsController::class, 'index']);
     Route::get('/add', [AlbumsController::class, 'add']);
     Route::post('/insert', [AlbumsController::class, 'insert']);
@@ -70,5 +70,5 @@ Route::group(['prefix' => '/albums', 'as' => 'admin'], function () {
     Route::get('/exclusives/delete/{id}', [AlbumsController::class, 'delete_exclusive']);
 });
 
-Route::view('/contact', 'contact')->name('contact');
-Route::view('/maintenance', 'maintenance')->name('maintenance');
+// Route::view('/contact', 'contact')->name('contact');
+// Route::view('/maintenance', 'maintenance')->name('maintenance');
