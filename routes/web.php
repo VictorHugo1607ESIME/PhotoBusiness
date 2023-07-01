@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 // VIEWS
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/collections', [HomeController::class, 'collections'])->name('collections');
+Route::get('/collections/{search}', [HomeController::class, 'collections'])->name('collections');
 Route::get('/politicas', [HomeController::class, 'politicas'])->name('politicas');
 Route::get('/quienessomos', [HomeController::class, 'quienessomos'])->name('quienessomos');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
@@ -36,24 +36,28 @@ Route::get('/addPhotoCookies/{idImage}/{requestWith}/{requestHeight}', [HomeCont
 Route::get('/updateDownUsersOnline', [HomeController::class, 'updateUsersOnline'])->name('updateUsersOnline');
 Route::get('/updateUpUsersOnline', [HomeController::class, 'updateUpUsersOnline'])->name('updateUpUsersOnline');
 Route::get('/addImageToCart', [HomeController::class, 'addImageToCart'])->name('addImageToCart');
+Route::post('/downloadImagesArray', [HomeController::class, 'downloadImagesArray'])->name('downloadImagesArray');
 
 Route::Post('/', [HomeController::class, 'login'])->name('login');
+
+
+Route::get('/prueba/zip',[HomeController::class, 'downloadImagesArray']);
 
 Route::get('/users/{id}', function ($id) {
     $user = DB::table('users')->where('id', $id)->first();
     return response()->json($user);
 });
-Route::group(['prefix' => '/automatic', 'as' => 'admin'], function () {
-    Route::get('/optimiceImage', [ImagesController::class, 'automatic_optimiceImage']);
-    Route::get('/checkImage', [ImagesController::class, 'automatic_checkImage']);
-    Route::get('/checkFolder', [ImagesController::class, 'automatic_check_folder']);
-    Route::get('/sync', [ImagesController::class, 'automatic_sync']);
+
+Route::group(['prefix' => '/automatic'], function () {
+    Route::get('/optimiceImage',[ImagesController::class,'automatic_optimiceImage']);
+    Route::get('/checkImage',[ImagesController::class,'automatic_checkImage']);
+    Route::get('/checkFolder',[ImagesController::class,'automatic_check_folder']);
+    Route::get('/sync',[ImagesController::class,'automatic_sync']);
 });
+Route::get('/prueba_descarga', [HomeController::class, 'prueba_descarga']);
 Route::get('/sync_manual', [ImagesController::class, 'sync_manual']);
-Route::get('/phpinfo', function () {
+Route::get('/phpinfo', function() {
     return phpinfo();
 });
 
-Route::get('/phpinfo', function () {
-    return phpinfo();
-});
+

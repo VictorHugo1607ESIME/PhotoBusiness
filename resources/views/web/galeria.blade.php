@@ -8,20 +8,19 @@
     <div class="row d-flex">
 
         @foreach ($result['photos'] as $image)
-        <a
+        <a @if(!$result['isCoverPhoto'] && $result['generalData']['namePage'] == 'album') onclick="comprar({{$image->id_album}}, {{$image->id}})" @endif
         @if($result['generalData']['pageComprar'])
             onclick="selectImage({{json_encode($image)}})"
         @else
             @if($result['isCoverPhoto']) href="/album/{{ $image->id_album }}/{{ $image->album_name }}"
-            @else href="/comprar/{{ $image->id_album }}/{{ $image->id }}" target="_blank"
             @endif
         @endif
         class="contentImgGeneral @if($image->image_with >= $image->image_height) contentImgWibe @else contentImgLong @endif ">
 
-            <img class="imgAlbum" src="{{ $image->optimice_path }}" alt="" oncontextmenu="return false;">
+            <img class="imgAlbum" src="@if($image->optimice_path != null) {{$image->optimice_path}} @else {{$image->image_path}} @endif" alt="" oncontextmenu="return false;">
             @if($result['isCoverPhoto'])
-                <div class="contentNumberImage col-12 row">
-                    <label class="numberImage col-12" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> {{ $image->number_photos }} imágenes</label>
+                <div class="contentNumberImage row">
+                    <label class="numberImage" for=""><img class="iconNumberPhotos" src="{{ asset('icons/imageIcon.png') }}" alt=""> {{ $image->number_photos }} imágenes</label>
                 </div>
             @endif
             @if($result['isCoverPhoto'])
@@ -36,3 +35,17 @@
 
     </div>
   </div>
+
+  <script>
+    function comprar(idAlbum, idImage){
+        // Abrir una nueva ventana
+        var url = "/comprar/"+idAlbum+"/"+idImage
+        console.log(url)
+
+        window.open(url, "_blank", "width=1300,height=1300")
+
+        // Personalizar opciones de la nueva ventana
+        //var ventanaNueva = window.open("https://www.example.com", "_blank", opciones);
+
+    }
+  </script>

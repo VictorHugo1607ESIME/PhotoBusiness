@@ -10,7 +10,14 @@
                 </div>
                 @if ($id > 0)
                     <div class="row">
-                        <div class="col-10">
+                        <div class="col-2">
+                            <input class="form-check-input" type="checkbox" value="{{ $id }}"
+                                wire:model="imagesCheck" id="flexCheckDefault-{{ $id }}"
+                                style="cursor: pointer">
+                            <label class="form-check-label" for="flexCheckDefault-{{ $id }}">
+                            </label>
+                        </div>
+                        <div class="col-8">
                             <div class="d-grid gap-1 mt-1">
                                 <button class="btn  btn-outline-danger deletedImagen" data-id="{{ $id }}"
                                     type="button">Eliminar</button>

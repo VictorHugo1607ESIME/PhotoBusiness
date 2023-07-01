@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Libs\helpers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use ZipArchive;
 use Image;
 
 
@@ -64,26 +64,30 @@ class Images extends Model
     public function download_img($idImage, $requestWith, $requestHeight)
     {
         try {
+            $user = 0;
+            if (Auth::id()) {
+                $user = Auth::id();
+            }
             $modelImage = new Images();
             $imagen = DB::table('images')->where('id', $idImage)->first();
             if ($imagen && file_exists(public_path($imagen->image_path))) {
                 if ($imagen->image_height == $requestHeight && $imagen->image_with == $requestWith) {
                     return public_path($imagen->image_path);
                 }
-                $image_resize = Image::make(public_path($imagen->image_path));
+                $image_resize = Image::make(public_path($imagen->image_path))->encode('jpg', 100);
                 $image_resize->resize($requestWith, $requestHeight, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
-                $micarpeta = public_path('/temporalResize/' . Auth::id());
+                $micarpeta = public_path('/temporalResize/' . $user);
                 if (!file_exists($micarpeta)) {
                     mkdir($micarpeta, 0777, true);
                 }
-                $image_resize->save($micarpeta . '/resize-' . $imagen->image_name, 100, 'jpg');
+                $image_resize->save($micarpeta . '/resize-' . strtolower($imagen->image_name));
 
                 DB::table('downloads')->insertGetId([
                     'id_image' => $idImage,
-                    'id_user' => Auth::id(),
+                    'id_user' => $user,
                     'download_with' => $requestWith,
                     'download_height' => $requestHeight,
                     'download_day' => date('d'),
@@ -92,7 +96,7 @@ class Images extends Model
                     'created_at' => date('Y-m-d H:s:i'),
                 ]);
 
-                return $micarpeta . "/resize-" . $imagen->image_name;
+                return public_path('/temporalResize/' . $user . "/resize-" . strtolower($imagen->image_name));
             }
             return false;
         } catch (\Throwable $th) {
@@ -153,7 +157,7 @@ class Images extends Model
                 ]);
                 chmod($micarpeta . '/optimice-' . $imagen->image_name, 0777);
                 return true;
-            }else{
+            } else {
                 $optimice = DB::table('images')->where('id', $id)->update([
                     'optimice_path' => 1
                 ]);
@@ -172,5 +176,50 @@ class Images extends Model
         return (bool)(in_array($imageTypeArray, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP)));
     }
 
-    
+    public function get_titule($path)
+    {
+        try {
+            $image = exif_read_data($path, 'IFD0');
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        // $image = Image::make($path)->exif('title');
+        return true;
+    }
+    function download_zip($data)
+    {
+        try {
+            //code...
+
+            $path = array();
+            if (!empty($data)) {
+                foreach ($data as $key => $item) {
+                    $url = $this->download_img((int)$item["id"], (int)$item["width"], (int)$item["height"]);
+                    if ($url != false) {
+                        array_push($path, $url);
+                    }
+                }
+            }
+            if (!empty($path)) {
+                // Define Dir Folder
+                $public_dir = public_path();
+                // Zip File Name
+                $zipFileName = '/zip/fotos-' . date('Y-m-d H:i:s') . '.zip';
+                // Create ZipArchive Obj
+                $zip = new ZipArchive;
+                if ($zip->open($public_dir  . $zipFileName, ZipArchive::CREATE) === TRUE) {
+                    // Add Multiple file   
+                    foreach ($path as $key => $file) {
+                        $zip->addFile($file, $key . '.jpg');
+                    }
+                    $zip->close();
+                }
+                return $zipFileName;
+            }
+        } catch (\Throwable $th) {
+            return null;
+            //throw $th;
+        }
+    }
 }

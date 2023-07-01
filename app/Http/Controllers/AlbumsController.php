@@ -158,7 +158,10 @@ class AlbumsController extends Controller
     {
         // dd($id_album);
         try {
-            $images = DB::table('images')->where('id_album', $id_album)->get();
+            $images = DB::table('images')
+                ->where('image_status', 'A')
+                ->where('id_album', $id_album)
+                ->get();
 
             return view('admin.albums.get_images')->with('images', $images)->render();
         } catch (\Throwable $th) {
@@ -241,6 +244,7 @@ class AlbumsController extends Controller
             $exist = DB::table('albums')->where('id', $id)->get();
             if ($exist) {
                 DB::table('albums')->where('id', $id)->delete();
+                DB::table('images')->where('id_album', $id)->update(['image_status', 'A']);
                 return redirect()->back()->with('success', true);
             }
             return redirect()->back()->with('error', true);

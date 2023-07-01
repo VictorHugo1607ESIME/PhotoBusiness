@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Session;
 use Illuminate\Cookie\CookieJar;
+use Illuminate\Http\Response;
 
 // modelos
 use App\Models\Images;
@@ -27,12 +28,18 @@ class HomeController extends Controller
         return view('web/home')->with('result', $result);
     }
 
-    public function collections()
+    public function collections(Request $request)
     {
+        $result['photos'] = null;
+        if($request->input('search') != null){
+            $search = $request->input('search');
+            $result['photos'] = $this->getAlbumKeyword($search);
+        }else{
+            $result['photos'] = $this->getAlbum(null);
+        }
         $result['title'] = 'Colecciones';
         $result['description'] = 'Colecciones';
         $result['generalData'] = $this->generalData();
-        $result['photos'] = $this->getAlbum(null);
         $result['isCoverPhoto'] = true;
         $result['page'] = 'collections';
         return view('web/collections')->with('result', $result);;
@@ -80,6 +87,7 @@ class HomeController extends Controller
         $result['title'] = $nameAlbum;
         $result['description'] = $nameAlbum;
         $result['generalData'] = $this->generalData();
+        $result['generalData']['namePage'] = 'album';
         $result['photos'] = $this->getImagesAlbum($idAlbum);
         $result['dataAlbum'] = $this->getDataAlbum($idAlbum);
         $result['isCoverPhoto'] = false;
@@ -94,12 +102,13 @@ class HomeController extends Controller
         $result['page'] = null;
         $result['isCoverPhoto'] = false;
         $result['generalData'] = $this->generalData();
+        $result['generalData']['namePage'] = 'comprar';
         $result['generalData']['pageComprar'] = true;
         $result['photo'] = $this->getImageForId($idImage);
         $result['isWideImage'] = null;
-        if($result['photo']->image_height > $result['photo']->image_with){
+        if ($result['photo']->image_height > $result['photo']->image_with) {
             $result['isWideImage'] = 0;
-        }else{
+        } else {
             $result['isWideImage'] = 1;
         }
         $result['isWideImage'] = true;
@@ -139,20 +148,28 @@ class HomeController extends Controller
 
     public function shoppingcart()
     {
-        $result['title'] = 'Mi cuenta';
+        $result['title'] = 'Mi carrito';
         $result['page'] = null;
         $result['generalData'] = $this->generalData();
+        $result['imageDownloads'] = null;
+
+        if ($result['generalData']['isLogin']) {
+            $dataSession = session('dataUserSession');
+            $result['imageDownloads'] = $this->getImagesInCar($dataSession->id);
+        }
+
         return view('web/shoppingcart')->with('result', $result);
     }
 
-    function addImageToCart(Request $request){
+    function addImageToCart(Request $request)
+    {
         //dd($request);
-        try{
+        try {
 
-            $response = ["status"=>"", "message"=>""];
+            $response = ["status" => "", "message" => ""];
             $dataSession = session('dataUserSession');
 
-            if($request->input('idImage') == null){
+            if ($request->input('idImage') == null) {
                 $response['status'] = "Error";
                 $response['message'] = "No se mando parametro valido";
 
@@ -170,16 +187,16 @@ class HomeController extends Controller
                 'status' => 0
             ]);
 
-            if($success){
+            if ($success) {
                 $response['status'] = "Success";
                 $response['message'] = "La imagen se cargo exitosamente";
-                DB::table('users')->where('id', '=', $dataSession->id)->increment('download_numbers',1);
-            }else{
+                DB::table('users')->where('id', '=', $dataSession->id)->increment('download_numbers', 1);
+            } else {
                 $response['status'] = "Error";
                 $response['message'] = $e->getMessage();
             }
             //dd($response);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             //dd($e->getMessage());
             $response['status'] = "Error";
             $response['message'] = $e->getMessage();
@@ -193,14 +210,22 @@ class HomeController extends Controller
     function generalData()
     {
         $generalData['isLogin'] = session('isLogin');
-        $generalData['hasExclusives'] = true;
+        $generalData['hasExclusives'] = false;
         $generalData['pageComprar'] = null;
         $generalData['shoppingcart'] = session('shoppingcart');
-        $generalData['userDownloads'] = null;
+        $generalData['userData'] = null;
+        $generalData['namePage'] = null;
+        $result['namePage'] = '';
+        $generalData['numberImageCar'] = 0;
+        $generalData['numberImageDownloadsUser'] = 0;
 
-        if($generalData['isLogin']){
+        if ($generalData['isLogin']) {
             $dataSession = session('dataUserSession');
-            $generalData['userDownloads'] = DB::table('users')->where('id','=', $dataSession->id)->first();
+            $generalData['userData'] = DB::table('users')->where('id', '=', $dataSession->id)->first();
+            $generalData['numberImageDownloadsUser'] = $generalData['userData']->download_numbers;
+
+            $generalData['numberImageCar'] = DB::table('downloads')->where('id_user', $dataSession->id)->where('status', 0)
+                ->count();
         }
 
         return $generalData;
@@ -286,20 +311,76 @@ class HomeController extends Controller
     {
         $modelImage = new Images();
         $dataSession = session('dataUserSession');
-        echo ($idImage);
-        echo ($requestWith);
-        echo ($requestHeight);
-        // $cookieJar = app(CookieJar::class);
-        // $cookie = $cookieJar->make('idImagesSelected', json_encode($idImage));
-        // $cookie = $cookieJar->make('idImagesSelected', json_encode($requestWith));
-        // $cookie = $cookieJar->make('idImagesSelected', json_encode($requestHeight));
+
         $download = $modelImage->download_img($idImage, $requestWith, $requestHeight);
 
         if ($download != false) {
-            DB::table('users')->where('id', '=', $dataSession->id)->increment('download_numbers',1);
-            return response()->download($download);
+            DB::table('users')->where('id', '=', $dataSession->id)->increment('download_numbers', 1);
+            if (file_exists(($download))) {
+                $headers = [
+                    'Content-Description' => 'File Transfer',
+                    'Content-Type' => 'image/jpeg',
+                ];
+                return response()->download($download, 'img.jpg', $headers);
+            }
         }
-        return back();
+        //return back();
+    }
+    public function prueba_descarga()
+    {
+        $headers = [
+            'Content-Description' => 'File Transfer',
+            'Content-Type' => 'image/jpeg',
+        ];
+        $download = '/var/www/entrefam/public/temporalResize/2/resize-entrefam63096483_.jpg';
+        return response()->download($download, 'img.jpg', $headers);
+    }
+
+    private function getImagesInCar($idUser)
+    {
+        return DB::table('downloads')
+            ->select(
+                'downloads.downloads_id',
+                'downloads.id_image',
+                'downloads.id_album',
+                'downloads.status',
+                'images.id',
+                'images.id_album',
+                'images.image_path',
+                'images.image_with',
+                'images.image_height',
+                'images.optimice_path',
+                'images.created_at',
+                'images.updated_at',
+                'albums.album_name',
+            )
+            ->join('images', 'images.id', 'downloads.id_image')
+            ->join('albums', 'albums.id', 'images.id_album')
+            ->where('downloads.id_user', $idUser)
+            ->where('downloads.status', 0)
+            ->get();
+    }
+
+    function downloadImagesArray(Request $request)
+    {
+        $data = array();
+        $modelImage = new Images();
+        $dataSession = session('dataUserSession');
+        $response = ["status" => "", "message" => ""];
+        $response['status'] = "success";
+        $response['message'] = $request->listImages;
+        if ($request->all()) {
+
+            foreach ($request->images as $key => $value) {
+                array_push($data, $value);
+            }
+        }
+
+        if (!empty($data)) {
+            $url = $modelImage->download_zip($data);
+
+            return response([$response, "url" => $url], 200);
+        }
     }
 
     function getAlbum($limit)
@@ -312,12 +393,14 @@ class HomeController extends Controller
                 'images.image_path',
                 'image_with',
                 'image_height',
+                'images.optimice_path',
                 'albums.id',
                 'albums.album_name',
                 'albums.number_photos',
                 'albums.date'
             )
             ->join('albums', 'images.id_album', '=', 'albums.id')
+            ->orderBy('albums.date', 'desc')
             ->distinct()->get();
 
         $dataAlbums = array($DBAlbum['0']);
@@ -327,6 +410,89 @@ class HomeController extends Controller
                 array_push($dataAlbums, $DBAlbum[$i]);
             }
         }
+
+        usort($dataAlbums, function ($a, $b) {
+            $aWidth = $a->image_with;
+            $bWidth = $b->image_with;
+            $aHeight = $a->image_height;
+            $bHeight = $b->image_height;
+
+            // Compara la anchura de las imágenes
+            if ($aWidth > $bWidth) {
+                return -1; // $a viene antes que $b
+            } elseif ($aWidth < $bWidth) {
+                return 1; // $b viene antes que $a
+            } else {
+                // Si las anchuras son iguales, compara las alturas
+                if ($aHeight > $bHeight) {
+                    return -1; // $a viene antes que $b
+                } elseif ($aHeight < $bHeight) {
+                    return 1; // $b viene antes que $a
+                } else {
+                    return 0; // No hay diferencia entre $a y $b
+                }
+            }
+        });
+
+        return $dataAlbums;
+    }
+
+    function getAlbumKeyword($keyword)
+    {
+        $dataAlbums = null;
+        $DBAlbum = DB::table('images')
+            ->select(
+                'images.id',
+                'images.id_album',
+                'images.image_path',
+                'image_with',
+                'image_height',
+                'images.optimice_path',
+                'albums.id',
+                'albums.album_name',
+                'albums.number_photos',
+                'albums.date'
+            )
+            ->join('albums', 'images.id_album', '=', 'albums.id')
+            ->whereRaw("LOWER(albums.album_name) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
+            //->whereRaw("LOWER(albums.album_keywords) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
+            //->whereRaw("LOWER(albums.album_keyname) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
+            ->orderBy('albums.date', 'desc')
+            ->distinct()->get();
+
+        //dd($DBAlbum);
+
+        if(isset($DBAlbum['0'])){
+            $dataAlbums = array($DBAlbum['0']);
+            for ($i = 0; $i <= count($DBAlbum) - 1; $i++) {
+                if ($dataAlbums[count($dataAlbums) - 1]->id_album != $DBAlbum[$i]->id_album) {
+                    array_push($dataAlbums, $DBAlbum[$i]);
+                }
+            }
+        }
+
+        usort($dataAlbums, function ($a, $b) {
+            $aWidth = $a->image_with;
+            $bWidth = $b->image_with;
+            $aHeight = $a->image_height;
+            $bHeight = $b->image_height;
+
+            // Compara la anchura de las imágenes
+            if ($aWidth > $bWidth) {
+                return -1; // $a viene antes que $b
+            } elseif ($aWidth < $bWidth) {
+                return 1; // $b viene antes que $a
+            } else {
+                // Si las anchuras son iguales, compara las alturas
+                if ($aHeight > $bHeight) {
+                    return -1; // $a viene antes que $b
+                } elseif ($aHeight < $bHeight) {
+                    return 1; // $b viene antes que $a
+                } else {
+                    return 0; // No hay diferencia entre $a y $b
+                }
+            }
+        });
 
         return $dataAlbums;
     }
@@ -340,6 +506,7 @@ class HomeController extends Controller
                 'images.image_path',
                 'images.image_with',
                 'images.image_height',
+                'images.optimice_path',
                 'albums.id',
                 'albums.album_name',
                 'albums.number_photos',
@@ -391,6 +558,7 @@ class HomeController extends Controller
     function getImageForId($idImage)
     {
         $DBAlbum = DB::table('images')->where('id', '=', $idImage)->first();
+
         return $DBAlbum;
     }
 }
