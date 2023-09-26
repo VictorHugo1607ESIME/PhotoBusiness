@@ -103,8 +103,7 @@ class UsersController extends Controller
         $result['breadcrumb'] = array();
         array_push($result['breadcrumb'], ['title' => 'Usuarios', 'url' => url('admin/users')]);
         array_push($result['breadcrumb'], ['title' => ' Editar Usuario', 'url' => url('admin/users/edit', $id)]);
-        $result['data'] = DB::table('users')->where('id', $id)->first();
-        return view('admin.users.edit')->with('result', $result);
+        return view('admin.users.edit')->with('result', $result)->with('id',$id);
     }
 
     public function logout()

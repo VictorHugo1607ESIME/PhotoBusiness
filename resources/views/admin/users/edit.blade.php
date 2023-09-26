@@ -1,6 +1,6 @@
-@extends('admin.layout.layout')
+@extends('admin.layout.app2')
 @section('content')
-    <div class="row justify-content-center">
+    {{-- <div class="row justify-content-center">
         <div class="col-12 col-sm-12 col-md-12 text-center">
             <h2>Editar el usuario</h2>
         </div>
@@ -32,23 +32,17 @@
                 </div>
             </div>
         </div>
+    </div> --}}
+    <div class="grid grid-cols-4 gap-4">
+        <div class="col-span-2 col-start-2 text-center">
+            <h5>Editar Usuario</h5>
+        </div>
+    </div>
+    <div class="grid grid-cols-4 gap-4">
+        <div class="col-span-2 col-start-2">
+            @livewire('users-edit', ['id' => $id])
+        </div>
     </div>
 @endsection
 @section('js')
-    <script>
-        $(document).ready(function() {
-            $('.viewPass').click(function(e) {
-                e.preventDefault();
-                console.log();
-                $(this).empty();
-                if ($("#password").attr("type") == 'text') {
-                    $('.pass').attr('type', 'password');
-                    $(this).html('<i class="fa-regular fa-eye"></i>');
-                } else {
-                    $('.pass').attr('type', 'text');
-                    $(this).html('<i class="fa-solid fa-eye-slash"></i>');
-                }
-            });
-        });
-    </script>
 @endsection

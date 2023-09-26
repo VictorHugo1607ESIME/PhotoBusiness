@@ -151,7 +151,7 @@ class Images extends Model
                 if (!file_exists($micarpeta)) {
                     mkdir($micarpeta, 0777, true);
                 }
-                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 15, 'jpg');
+                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 10, 'jpg');
                 $optimice = DB::table('images')->where('id', $id)->update([
                     'optimice_path' => '/optimiceImg/optimice-' . $imagen->image_name
                 ]);
@@ -209,7 +209,7 @@ class Images extends Model
                 // Create ZipArchive Obj
                 $zip = new ZipArchive;
                 if ($zip->open($public_dir  . $zipFileName, ZipArchive::CREATE) === TRUE) {
-                    // Add Multiple file   
+                    // Add Multiple file
                     foreach ($path as $key => $file) {
                         $zip->addFile($file, $key . '.jpg');
                     }

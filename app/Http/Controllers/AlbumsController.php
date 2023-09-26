@@ -47,6 +47,7 @@ class AlbumsController extends Controller
         array_push($result['breadcrumb'], ['title' => 'Agregar album', 'url' => url('admin/albums/add')]);
         array_push($result['breadcrumb'], ['title' => 'Editar album', 'url' => url('admin/albums/edit', $id)]);
         $id = base64_decode($id);
+        $result['id'] = $id;
         if (is_numeric($id)) {
             $result['album'] = DB::table('albums')
                 // ->select('albums')
@@ -54,7 +55,7 @@ class AlbumsController extends Controller
                 ->where('albums.id', $id)
                 ->first();
         }
-        $result['html_images'] = $this->getImages_album($id);
+        // $result['html_images'] = $this->getImages_album($id);
         return view('admin.albums.edit')->with('result', $result);
     }
 
@@ -112,10 +113,10 @@ class AlbumsController extends Controller
     {
         try {
             $dataImagen = array();
-            $album = DB::table('albums')->where('album_slug', trim($request->slug))->first();
+            $album = DB::table('albums')->where('id', (int)$request->album_id)->first();
             if ($album && $request->file("file")) {
                 $imagen = $request->file("file");
-                $ruta = public_path("img/" . trim($request->slug)) . '/';
+                $ruta = public_path("img/" . trim($album->album_slug)) . '/';
                 if (!file_exists($ruta)) {
                     mkdir($ruta, 0777, true);
                 }
@@ -125,7 +126,7 @@ class AlbumsController extends Controller
                 // $dataImagen = getimagesize(realpath($request->file("file")));
                 // dd($dataImagen);
                 $nameImagen = $imagen->getClientOriginalName();
-                $ruta_asset = "/img/" . trim($request->slug) . '/' . $nameImagen;
+                $ruta_asset = "/img/" . trim($album->album_slug) . '/' . $nameImagen;
                 // copy(realpath($request->file("file")), $ruta . $nameImagen);
                 $request->file('file')->move($ruta, $nameImagen);
                 if (!empty($dataImagen)) {
@@ -140,15 +141,52 @@ class AlbumsController extends Controller
                     $set = $this->images->add($nameImagen, $album->id, $ruta_asset, asset($ruta_asset), $dataImagen[0], $dataImagen[1], 'photo', $data);
                     if ($set > 0) {
                         $this->images->optimice($set);
+                        $this->getInfo($set);
                     }
+                    $this->countImages($album->id);
                 }
                 return response(['success' => true], 200);
             }
             return response(['success' => false], 404);
         } catch (\Throwable $th) {
-            dd($th);
             //throw $th;
             return response(['success' => false], 404);
+        }
+    }
+    public function getInfo($id)
+    {
+        try {
+            $modelo = new Images();
+            $imagen = DB::table('images')->where('id', $id)->first();
+            $modelo->get_titule(public_path($imagen->image_path));
+            if ($imagen->image_info == null || $imagen->image_with == 0 || $imagen->image_height == 0) {
+                $data = getimagesize(public_path($imagen->image_path), $i);
+                if ($data) {
+                    DB::table('images')->where('id', $id)->update([
+                        'image_with' => $data[0],
+                        'image_height' => $data[1],
+                    ]);
+                }
+                $info = exif_read_data(public_path($imagen->image_path), 0, true);
+                if ($info) {
+                    DB::table('images')->where('id', $id)->update([
+                        'image_info' => json_encode($info),
+                    ]);
+                }
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function countImages($album_id)
+    {
+        try {
+            $images = DB::table('images')->where('id_album', $album_id)->where('image_status', 'A')->count();
+            DB::table('albums')->where('id', $album_id)->update([
+                'number_photos' => $images,
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 
@@ -325,5 +363,13 @@ class AlbumsController extends Controller
             //throw $th;
             return response(['success' => false], 200);
         }
+    }
+    public  function add_view_images($id)
+    {
+        $result['album'] = DB::table('albums')
+            ->where('albums.id', $id)
+            ->first();
+        $this->countImages($id);
+        return view('admin.albums.add_images')->with('result', $result)->with('id', $id);
     }
 }

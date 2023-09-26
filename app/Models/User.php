@@ -59,14 +59,16 @@ class User extends Authenticatable
                 'email' => trim($data['email']),
                 'password' =>  Hash::make(trim($data['password'])),
                 'id_role' => isset($data['role_id']) ? $data['role_id'] : 0,
-                'company_id' => session('company_id'),
-                'users_onlien' => 0,
-                'users_max_onlien' => isset($data['users_max_onlien']) ? $data['users_max_onlien'] : null,
+                'company_id' => 0,
+                'users_online' => 0,
+                'users_max_online' => isset($data['users_max_onlien']) ? $data['users_max_onlien'] : null,
                 'download_numbers' => isset($data['download_numbers']) ? $data['download_numbers'] : -1,
+                'max_download_numbers'=>999999999,
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
             return $id;
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             return 0;
         }

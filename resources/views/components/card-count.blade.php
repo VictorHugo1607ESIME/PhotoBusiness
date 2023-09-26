@@ -1,17 +1,20 @@
 <div>
-    <div class="card  text-white card-height" style="background-color:{{ $color }}">
-        <div class="card-body text-white">
-            <div class="row">
-                <div class="col-6">
-                    <h4 class="text-white">{{ $count }}</h4>
+    <div class="block p-1 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+        style="background-color:{{ $color }}">
+        <div class="grid grid-cols-1 gap-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="">
+                    <h4 class="text-4xl text-white text-center font-bold mt-2">{{ $count }}</h4>
                 </div>
-                <div class="col-6 text-right icono">
+                <div class=" text-right icono">
                     {{ $slot }}
                 </div>
-                <div class="col-12">{{ $title }}</h6>
+            </div>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="col-span-3 font-bold"><h6>{{ $title }}</h6>
                 </div>
-                <div class="col-12">
-                    <a href="" class="card-link text-dark">Ver <i class="fa-solid fa-eye"></i></a>
+                <div class="">
+                    <a href="" class="card-link text-dark text-sm">Ver <i class="fa-solid fa-eye"></i></a>
                 </div>
             </div>
         </div>

@@ -12,7 +12,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="album_date" class="form-label">Fecha de publicacion</label>
-                    <input type="date" class="form-control" id="date" name="date">
+                    <input type="date" class="form-control" id="date" name="date" value="{{ date('Y-m-d') }}">
                 </div>
                 <div class="mb-3">
                     <label for="exclusive" class="form-label">Album exclusivo</label>

@@ -54,6 +54,7 @@ Route::group(['prefix' => '/companies', 'middleware' => ['authAdmin']], function
 });
 Route::group(['prefix' => '/albums'], function () {
     Route::get('/', [AlbumsController::class, 'index']);
+    Route::get('/add/images/{id}', [AlbumsController::class, 'add_view_images']);
     Route::get('/add', [AlbumsController::class, 'add']);
     Route::post('/insert', [AlbumsController::class, 'insert']);
     Route::get('/edit/{id}', [AlbumsController::class, 'edit']);

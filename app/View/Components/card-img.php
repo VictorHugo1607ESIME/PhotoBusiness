@@ -14,11 +14,17 @@ class card-img extends Component
     public $url;
     public $alt;
     public $id;
-    public function __construct($url,$id,$alt=null)
+    public $btnPrincipal;
+    public $idPrincipal;
+    public $key;
+    public function __construct($key=null,$url,$id,$alt=null,$btnPrincipal=false ,$idPrincipal=0)
     {
+        $this->key=$key;
         $this->url=$url;
         $this->path=$path;
         $this->id=$id;
+        $this->btnPrincipal=$btnPrincipal;
+        $this->idPrincipal=$idPrincipal;
     }
 
     /**

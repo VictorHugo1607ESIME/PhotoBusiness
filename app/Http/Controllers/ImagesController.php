@@ -11,8 +11,7 @@ use File;
 use Storage;
 use App\Models\Images;
 use App\Models\Albums;
-
-use PHPExiftool\Reader;
+use Illuminate\Support\Str;
 
 class ImagesController extends Controller
 {
@@ -419,7 +418,7 @@ class ImagesController extends Controller
 
         if (is_array($info)) {
             $iptc = iptcparse($info["APP13"]);
-            // var_dump($iptc); // this will show all the data retrieved but I'm only concerned with a few 
+            // var_dump($iptc); // this will show all the data retrieved but I'm only concerned with a few
             $return['title'] = $iptc['2#005'][0];
             $return['subject'] = $iptc['2#120'][0];
             $return['tags'] = $iptc['2#025'];
@@ -434,7 +433,7 @@ class ImagesController extends Controller
             $image = DB::table('images')
                 ->where('images.optimice_path', null)
                 ->orderBy('id', 'DESC')
-                ->limit(5)
+                ->limit(50)
                 ->get();
             if ($image) {
                 foreach ($image as $item) {
@@ -452,56 +451,46 @@ class ImagesController extends Controller
     public function automatic_checkImage()
     {
         try {
-            
-
-$imagePath = 'ruta/a/la/imagen.jpg'; // Ruta de la imagen que deseas obtener el título
-
-$exifTool = new Reader();
-$metadata = $exifTool->getImageMetadata($imagePath);
-
-if (isset($metadata['Title'])) {
-    $title = $metadata['Title'];
-    echo $title;
-} else {
-    echo 'No se encontró el título en los metadatos de la imagen.';
-}
-            // $count = $image = DB::table('images')
-            //     ->where('checkImage', false)
-            //     ->count();
-            // if ($count < 1) {
-            //     $image = DB::table('images')->update([
-            //         'checkImage' => false
-            //     ]);
-            // }
-            // $images = $image = DB::table('images')
-            //     ->where('checkImage', false)
-            //     ->orderBy('id', 'DESC')
-            //     ->limit(25)
-            //     ->get();
-            // foreach ($images as $item) {
-            //     var_dump('<br>' . $item->id);
-            //     if (!file_exists(public_path($item->image_path))) {
-            //         DB::table('images')->where('id', $item->id)->delete();
-            //         var_dump('--delete');
-            //         continue;
-            //     }
-            //     if ($item->optimice_path != 1 && !file_exists(public_path($item->optimice_path))) {
-            //         DB::table('images')->where('id', $item->id)->update([
-            //             'optimice_path' => null
-            //         ]);
-            //         var_dump('--optimice null');
-            //     }
-            //     if ($item->id_album > 0) {
-            //         $count = DB::table('images')->where('id_album', $item->id_album)->get()->count();
-            //         DB::table('albums')->where('id', $item->id_album)->update(['number_photos' => $count]);
-            //     }
-            //     $this->getInfo($item->id);
-            //     DB::table('images')->where('id', $item->id)->update([
-            //         'checkImage' => true
-            //     ]);
-            // }
+            $count = $image = DB::table('images')
+                ->where('checkImage', false)
+                ->where('image_status', 'A')
+                ->count();
+            if ($count < 1) {
+                $image = DB::table('images')->update([
+                    'checkImage' => false
+                ]);
+            }
+            $images = $image = DB::table('images')
+                ->where('checkImage', false)
+                ->orderBy('id', 'DESC')
+                ->where('image_status', 'A')
+                ->limit(50)
+                ->get();
+            foreach ($images as $item) {
+                var_dump('<br>' . $item->id);
+                if (!file_exists(public_path($item->image_path))) {
+                    DB::table('images')->where('id', $item->id)->update([
+                        'image_status' => 'E'
+                    ]);
+                    var_dump('--delete');
+                    continue;
+                }
+                if ($item->optimice_path != 1 && !file_exists(public_path($item->optimice_path))) {
+                    DB::table('images')->where('id', $item->id)->update([
+                        'optimice_path' => null
+                    ]);
+                    var_dump('--optimice null');
+                }
+                if ($item->id_album > 0) {
+                    $count = DB::table('images')->where('id_album', $item->id_album)->get()->count();
+                    DB::table('albums')->where('id', $item->id_album)->update(['number_photos' => $count]);
+                }
+                $this->getInfo($item->id);
+                DB::table('images')->where('id', $item->id)->update([
+                    'checkImage' => true
+                ]);
+            }
         } catch (\Throwable $th) {
-            dd($th);
             //throw $th;
         }
     }
@@ -527,7 +516,6 @@ if (isset($metadata['Title'])) {
                 }
             }
         } catch (\Throwable $th) {
-            dd($th);
             //throw $th;
         }
     }
@@ -623,7 +611,7 @@ if (isset($metadata['Title'])) {
                     mkdir($path . '/' . $folder->name, 0777, true);
                 }
                 $album = $modelAlbums->add($folder->name);
-                $archivos = DB::table('temp_file')->where('id_folder', $folder->id)->limit(5)->get();
+                $archivos = DB::table('temp_file')->where('id_folder', $folder->id)->limit(20)->get();
                 foreach ($archivos as $item) {
                     $exists = DB::table('images')->where('image_name', $item->name)->first();
                     if (!$exists) {
@@ -664,6 +652,170 @@ if (isset($metadata['Title'])) {
         } catch (\Throwable $th) {
             //throw $th;
             return response(['success' => false, 'code' => 404]);
+        }
+    }
+    public function automatic_delete_images()
+    {
+        try {
+
+            $albums = DB::table('albums')->where('album_status', 'E')->get();
+
+            if ($albums) {
+                foreach ($albums as $key => $value) {
+                    $img = DB::table('images')->where('id_album', $value->id)->update([
+                        'image_status' => 'E'
+                    ]);
+                    $mis_fotos = public_path('img/' . $value->album_slug);
+                    foreach (glob($mis_fotos . "/*.*") as $archivos_carpeta) {
+                        unlink($archivos_carpeta);     // Eliminamos todos los archivos de la carpeta hasta dejarla vacia
+                    }
+                    $album = DB::table('albums')->where('id', $value->id)->delete();
+                    // rmdir($mis_fotos);         // Eliminamos la carpeta vacia
+                }
+            }
+
+            $images = DB::table('images')->where('image_status', 'E')->limit(100)->get();
+
+            if ($images) {
+                foreach ($images as $key => $item) {
+                    if (file_exists(public_path($item->image_path))) {
+                        unlink(public_path($item->image_path));
+                    }
+                    if (file_exists(public_path($item->optimice_path))) {
+                        unlink(public_path($item->optimice_path));
+                    }
+                    DB::table('images')->where('id', $item->id)->delete();
+                    var_dump('imagenes.-' . $item->id);
+                    var_dump('<hr>');
+                }
+            }
+        } catch (\Throwable $th) {
+            dd($th);
+            //throw $th;
+        }
+    }
+
+    function borrar_directorio($dirname)
+    {
+        //si es un directorio lo abro
+        if (is_dir($dirname))
+            $dir_handle = opendir($dirname);
+        //si no es un directorio devuelvo false para avisar de que ha habido un error
+        if (!$dir_handle)
+            return false;
+        //recorro el contenido del directorio fichero a fichero
+        while ($file = readdir($dir_handle)) {
+            if ($file != "." && $file != "..") {
+                //si no es un directorio elemino el fichero con unlink()
+                if (!is_dir($dirname . "/" . $file)) {
+                    unlink($dirname . "/" . $file);
+                } else { //si es un directorio hago la llamada recursiva con el nombre del directorio
+                    $this->borrar_directorio($dirname . '/' . $file);
+                }
+            }
+        }
+        closedir($dir_handle);
+        //elimino el directorio que ya he vaciado
+        rmdir($dirname);
+        return true;
+    }
+
+    public function automatic_primary_image()
+    {
+        $array_album = array();
+
+        $main_image = DB::table('main_images')->select('album_id')->get();
+        foreach ($main_image as $item) {
+            array_push($array_album, $item->album_id);
+        }
+        $albums = DB::table('albums')
+            ->where('album_status', 'A')
+            ->whereNotIn('albums.id', $array_album)
+            ->limit(50)
+            ->orderBy('date', 'desc')
+            ->get();
+        if ($albums) {
+            foreach ($albums as $item) {
+                var_dump('album : ' . $item->id . '<br>');
+                $images = DB::table('images')->where('id_album', $item->id)->get();
+                if ($images) {
+                    $count = $images->count();
+                    $select = rand(0, $count);
+                    if ($select < $count && $select > 0) {
+                        $main = $images[$select];
+                        if ($main) {
+                            DB::table('main_images')->insert([
+                                'image_id' => $main->id,
+                                'album_id' => $item->id,
+                                'created_at' => date('Y-m-d H:i:s')
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function viewImageInfo()
+    {
+        $result = array();
+        $result['title'] = 'Automatic';
+        return view('web.getImageInfo')->with('result', $result);
+    }
+
+    public function getImageInfo()
+    {
+        // $update = DB::table('images')->update(['image_check' => 0]);
+        try {
+            $image = DB::table('images')->where('image_status', 'A')->where('image_check', 0)->orderBy('id_album', 'ASC')->first();
+            if ($image) {
+                $update = DB::table('images')->where('id', $image->id)->update([
+                    'image_check' => 2
+                ]);
+                return response(['image' => URL($image->image_path), 'id' => $image->id], 200);
+            }
+            return response(['image' => '', 'id' => ''], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return false;
+        }
+    }
+    public function setImageInfo(Request $request)
+    {
+        try {
+            $array_key = array();
+            $datos = null;
+            $image = DB::table('images')->where('id', $request->id)->first();
+            if ($image) {
+                if (isset($request->data['title']['description'])) {
+                    $image = DB::table('images')->where('id', $request->id)->update([
+                        'image_title' => trim($request->data['title']['description']),
+                        'image_check' => 1
+                    ]);
+                    array_push($array_key, trim($request->data['title']['description']));
+                }
+                if (isset($request->data['Keywords'])) {
+                    foreach ($request->data['Keywords'] as $key => $value) {
+                        if (isset($value['description'])) {
+                            array_push($array_key, $value['description']);
+                        }
+                    }
+                }
+                if (count($array_key) > 0) {
+                    $datos = implode(',', $array_key);
+                    $datos_slug = Str::slug($datos, ',');
+                    $image = DB::table('images')->where('id', $request->id)->update([
+                        'image_key' => $datos,
+                        'image_key_slug' => $datos_slug,
+                        'image_check' => 1
+                    ]);
+                }
+                return response([], 200);
+            }
+            return response([], 404);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response([], 404);
         }
     }
 }

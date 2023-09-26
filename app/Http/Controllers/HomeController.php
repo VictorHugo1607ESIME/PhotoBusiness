@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Session;
 use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 // modelos
 use App\Models\Images;
@@ -30,19 +31,23 @@ class HomeController extends Controller
 
     public function collections(Request $request)
     {
-        $result['photos'] = null;
-        if($request->input('search') != null){
+        $result['photos'] = false;
+        $result['description'] = '';
+        $search = null;
+        if ($request->input('search') != null) {
             $search = $request->input('search');
-            $result['photos'] = $this->getAlbumKeyword($search);
-        }else{
-            $result['photos'] = $this->getAlbum(null);
+            $result['photos'] = true;
+            // $result['photos'] = $this->getAlbumKeyword($search);
+            $result['description'] = $search;
+        } else {
+            // $result['photos'] = $this->getAlbum(null);
+            $result['description'] = 'Colecciones';
         }
         $result['title'] = 'Colecciones';
-        $result['description'] = 'Colecciones';
         $result['generalData'] = $this->generalData();
         $result['isCoverPhoto'] = true;
         $result['page'] = 'collections';
-        return view('web/collections')->with('result', $result);;
+        return view('web/collections')->with('result', $result)->with('search', $search);
     }
 
     public function exclusives()
@@ -92,7 +97,7 @@ class HomeController extends Controller
         $result['dataAlbum'] = $this->getDataAlbum($idAlbum);
         $result['isCoverPhoto'] = false;
         $result['page'] = 'collections';
-        return view('web/album')->with('result', $result);;
+        return view('web/album')->with('result', $result)->with('idAlbum', $idAlbum);
     }
 
     public function comprar($idAlbum, $idImage, Request $request)
@@ -158,6 +163,28 @@ class HomeController extends Controller
             $result['imageDownloads'] = $this->getImagesInCar($dataSession->id);
         }
 
+        $result['count_cart'] = DB::table('downloads')
+            ->select(
+                'downloads.downloads_id',
+                'downloads.id_image',
+                'downloads.id_album',
+                'downloads.status',
+                'images.id',
+                'images.id_album',
+                'images.image_path',
+                'images.image_with',
+                'images.image_height',
+                'images.optimice_path',
+                'images.created_at',
+                'images.updated_at',
+                'albums.album_name',
+            )
+            ->join('images', 'images.id', 'downloads.id_image')
+            ->join('albums', 'albums.id', 'images.id_album')
+            ->where('downloads.id_user', session('id_user'))
+            ->where('downloads.status', 0)
+            ->count();
+
         return view('web/shoppingcart')->with('result', $result);
     }
 
@@ -222,7 +249,7 @@ class HomeController extends Controller
         if ($generalData['isLogin']) {
             $dataSession = session('dataUserSession');
             $generalData['userData'] = DB::table('users')->where('id', '=', $dataSession->id)->first();
-            $generalData['numberImageDownloadsUser'] = $generalData['userData']->download_numbers;
+            $generalData['numberImageDownloadsUser'] = isset($generalData['userData']->download_number) ? $generalData['userData']->download_number : 0;
 
             $generalData['numberImageCar'] = DB::table('downloads')->where('id_user', $dataSession->id)->where('status', 0)
                 ->count();
@@ -241,10 +268,12 @@ class HomeController extends Controller
                 if ($dataUser->users_online < $dataUser->users_max_online) {
                     $credentials = ['email' => trim($request->recipientEmail), "password" => trim($request->recipientPass)];
                     if (Auth::attempt($credentials)) {
+                        session(['id_user' => auth()->user()->id]);
                         session(["isLogin" => true]);
                         session(["updateUsersOnline" => true]);
                         session(["dataUserSession" => $dataUser]);
                         DB::table('users')->where('id', $dataUser->id)->update(['users_online' => $dataUser->users_online + 1]);
+                        return redirect()->back()->with('login', true);
                     } else {
                         session(["isLogin" => false]);
                     }
@@ -255,9 +284,8 @@ class HomeController extends Controller
                 $request->session()->put('isLogin', false);
             }
         } catch (\Illuminate\Database\QueryException $ex) {
-            dd($ex->getMessage());
         }
-        return back();
+        return redirect()->back()->with('noLogin', true);
     }
 
     public function logout()
@@ -363,23 +391,69 @@ class HomeController extends Controller
 
     function downloadImagesArray(Request $request)
     {
-        $data = array();
-        $modelImage = new Images();
-        $dataSession = session('dataUserSession');
-        $response = ["status" => "", "message" => ""];
-        $response['status'] = "success";
-        $response['message'] = $request->listImages;
-        if ($request->all()) {
-
-            foreach ($request->images as $key => $value) {
-                array_push($data, $value);
+        try {
+            $data = array();
+            $modelImage = new Images();
+            $dataSession = session('dataUserSession');
+            $response = ["status" => "", "message" => ""];
+            $response['status'] = "success";
+            $response['message'] = $request->images;
+            $dataSession = session('dataUserSession');
+            $idUser = $dataSession->id;
+            if ($request->all()) {
+                foreach ($request->images as $key => $value) {
+                    /*try {
+                    DB::table('downloads')
+                        ->where('id_image', intval($value->id))
+                        ->where('id_user', $dataSession->id)
+                        ->update([
+                            'download_with' => $value->width,
+                            'download_height' => $value->height,
+                            'status' => 1
+                        ]);
+                } catch (\Exception $e) {
+                    // Imprimir el mensaje de error
+                    dd($e->getMessage());
+                }*/
+                    array_push($data, $value);
+                }
             }
-        }
+            if (!empty($data)) {
+                $url = $modelImage->download_zip($data);
 
-        if (!empty($data)) {
-            $url = $modelImage->download_zip($data);
+                if ($url == null) {
+                    return redirect()->back();
+                }
+                $descargas = DB::table('downloads')
+                    ->select(
+                        'downloads.downloads_id',
+                        'downloads.id_image',
+                        'downloads.id_album',
+                        'downloads.status',
+                        'images.id',
+                        'images.id_album',
+                        'images.image_path',
+                        'images.image_with',
+                        'images.image_height',
+                        'images.optimice_path',
+                        'images.created_at',
+                        'images.updated_at',
+                        'albums.album_name',
+                    )
+                    ->join('images', 'images.id', 'downloads.id_image')
+                    ->join('albums', 'albums.id', 'images.id_album')
+                    ->where('downloads.id_user', $idUser)
+                    ->where('downloads.status', 0)
+                    ->update([
+                        'downloads.status' => 1
+                    ]);
 
-            return response([$response, "url" => $url], 200);
+                return response([$response, "url" => $url], 200);
+            }
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back();
         }
     }
 
@@ -399,10 +473,12 @@ class HomeController extends Controller
                 'albums.number_photos',
                 'albums.date'
             )
-            ->join('albums', 'images.id_album', '=', 'albums.id')
-            ->orderBy('albums.date', 'desc')
-            ->distinct()->get();
-
+            ->leftJoin('albums', 'images.id_album', 'albums.id')
+            ->where('images.image_status', 'A')
+            ->where('albums.album_status', 'A')
+            ->orderBy('albums.date', 'DESC')
+            ->distinct()
+            ->get();
         $dataAlbums = array($DBAlbum['0']);
 
         for ($i = 0; $i <= count($DBAlbum) - 1; $i++) {
@@ -439,6 +515,7 @@ class HomeController extends Controller
 
     function getAlbumKeyword($keyword)
     {
+        Str::slug($keyword);
         $dataAlbums = null;
         $DBAlbum = DB::table('images')
             ->select(
@@ -453,16 +530,16 @@ class HomeController extends Controller
                 'albums.number_photos',
                 'albums.date'
             )
-            ->join('albums', 'images.id_album', '=', 'albums.id')
-            ->whereRaw("LOWER(albums.album_name) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
-            //->whereRaw("LOWER(albums.album_keywords) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
-            //->whereRaw("LOWER(albums.album_keyname) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
+            ->join('albums', 'images.id_album', '=', 'albums.id',)
+            // ->whereRaw("(LOWER(albums.album_name) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
+            // ->whereRaw("LOWER(images.image_title) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
+            ->whereRaw("LOWER(images.image_key_slug) LIKE CONCAT('%', ?, '%')", [strtolower($keyword)])
             ->orderBy('albums.date', 'desc')
             ->distinct()->get();
 
-        //dd($DBAlbum);
+        dd($DBAlbum);
 
-        if(isset($DBAlbum['0'])){
+        if (isset($DBAlbum['0'])) {
             $dataAlbums = array($DBAlbum['0']);
             for ($i = 0; $i <= count($DBAlbum) - 1; $i++) {
                 if ($dataAlbums[count($dataAlbums) - 1]->id_album != $DBAlbum[$i]->id_album) {

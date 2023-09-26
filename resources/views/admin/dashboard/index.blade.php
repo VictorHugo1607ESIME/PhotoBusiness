@@ -1,60 +1,66 @@
-@extends('admin.layout.layout')
+@extends('admin.layout.app2')
+@section('css')
+@endsection
 @section('content')
-    <div class="row mt-4 mb-4">
-        <div class="col-12">
-            <h4>Capacidad de almacenamiento</h4>
-        </div>
-        <div class="col-8">
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25"
-                    aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 gap-4">
+        <div id="visit"></div>
     </div>
-    <div class="row">
-        <div class="col-6 col-sm-6 col-md-3">
-            <x-card-count color="#bbbb88" title="Ultimas fotos" count="10"><i class="fa-solid fa-photo-film fa-3x"></i>
-            </x-card-count>
+    <div class="grid grid-cols-4 gap-4">
+        <div>
+            <x-card-count color="#F39C12" title="Imagenes totales" count="{{ $result['count_images'] }}"><i
+                    class="fa-solid fa-image fa-5x"></i></x-card-count>
         </div>
-        <div class="col-6 col-sm-6 col-md-3">
-            <x-card-count color="#80273d" title="Visitas" count="150"><i class="fa-solid fa-eye fa-3x"></i>
-            </x-card-count>
+        <div>
+            <x-card-count color="#3498DB" title="Albums totales" count="{{ $result['count_albums'] }}"><i
+                    class="fa-solid fa-folder fa-5x"></i></x-card-count>
         </div>
-        <div class="col-6 col-sm-6 col-md-3">
-            <x-card-count color="#ccc68d" title="Descargas" count="100"><i class="fa-solid fa-file-arrow-down fa-3x"></i>
-            </x-card-count>
+
+        <div>
+            <x-card-count color="#E74C3C" title="Usuarios registrados" count="{{ $result['count_users'] }}"><i
+                    class="fa-solid fa-user fa-5x"></i></x-card-count>
         </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-12 col-sm-12 col-md-4">
-            <div>
-                <canvas id="myChart"></canvas>
-            </div>
+        <div>
+            <x-card-count color="#BDC3C7" title="Albums exclusivos" count="{{ $result['count_exclusive'] }}"><i
+                    class="fa-solid fa-folder-plus fa-5x"></i></x-card-count>
         </div>
     </div>
 @endsection
-
 @section('js')
     <script>
-        const ctx = document.getElementById('myChart');
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+        var options = {
+            series: [{
+                name: "Visitas",
+                data: @js($result['visit_count'])
+            }],
+            chart: {
+                height: 350,
+                type: 'line',
+                zoom: {
+                    enabled: false
                 }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'straight'
+            },
+            title: {
+                text: 'Visitas de los ultimos 7 días',
+                align: 'left'
+            },
+            grid: {
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: @js($result['visit_date']),
             }
-        });
+        };
+
+        var chart = new ApexCharts(document.querySelector("#visit"), options);
+        chart.render();
     </script>
 @endsection

@@ -22,7 +22,8 @@ use Illuminate\Support\Facades\DB;
 
 // VIEWS
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/collections/{search}', [HomeController::class, 'collections'])->name('collections');
+Route::post('/collections', [HomeController::class, 'collections'])->name('collections');
+Route::get('/collections', [HomeController::class, 'collections']);
 Route::get('/politicas', [HomeController::class, 'politicas'])->name('politicas');
 Route::get('/quienessomos', [HomeController::class, 'quienessomos'])->name('quienessomos');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
@@ -53,11 +54,21 @@ Route::group(['prefix' => '/automatic'], function () {
     Route::get('/checkImage',[ImagesController::class,'automatic_checkImage']);
     Route::get('/checkFolder',[ImagesController::class,'automatic_check_folder']);
     Route::get('/sync',[ImagesController::class,'automatic_sync']);
+    Route::get('/delete_image',[ImagesController::class,'automatic_delete_images']);
+    Route::get('/primary_image',[ImagesController::class,'automatic_primary_image']);
+    Route::get('/getInfoImages',[ImagesController::class,'viewImageInfo']);
 });
+Route::get('/getimageInfo',[ImagesController::class,'getImageInfo']);
+Route::post('/setInfoImages',[ImagesController::class,'setImageInfo']);
+
 Route::get('/prueba_descarga', [HomeController::class, 'prueba_descarga']);
 Route::get('/sync_manual', [ImagesController::class, 'sync_manual']);
 Route::get('/phpinfo', function() {
     return phpinfo();
+});
+
+Route::get('/prueba',function(){
+    return view('prueba');
 });
 
 

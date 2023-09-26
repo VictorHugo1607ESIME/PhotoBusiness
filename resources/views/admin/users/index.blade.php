@@ -1,48 +1,16 @@
-@extends('admin.layout.layout')
+@extends('admin.layout.app2')
 @section('content')
-    <div class="row">
-        <div class="col-12 my-4 text-end">
-            <a href="{{ URL('/admin/users/add') }}" class="btn btn-primary">Agregar</a>
+    <div class="grid grid-cols-10 gap-4">
+        <div class="col-span-2 col-start-9">
+            <a href="{{ URL('/admin/users/add') }}"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4
+            focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700
+            dark:focus:ring-blue-800">Agregar
+                usuario</a>
         </div>
-        <div class="col-12 col-sm-12 col-md-12">
-            <div class="table-respose">
-                <table id="myTable" class="table table-striped">
-                    <thead>
-                        <th>Id</th>
-                        <th>Usuario</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Estatus</th>
-                        <th>Modificación</th>
-                        <th></th>
-                    </thead>
-                    <tbody>
-                        @foreach ($result['users'] as $item)
-                            <tr>
-                                <td>{{ $item->id }}</td>
-                                <td>{{ $item->user_name }}</td>
-                                <td>{{ $item->first_name }} {{ $item->last_name }}</td>
-                                <td>{{ $item->email }}</td>
-                                <td>
-                                    <x-status value="{{ $item->status }}" />
-                                </td>
-                                <td>{{ $item->updated_at }}</td>
-                                <td class="text-end">
-                                    <a href="{{ url('admin/users/edit', $item->id) }}" class="btn btn-primary"><i
-                                            class="fa-solid fa-pencil"></i></a>
-                                    <button class="btn btn-danger deletedUser" data-id="{{ $item->id }}"><i
-                                            class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-
-                </table>
-            </div>
-
-
-        </div>
-
+    </div>
+    <div class="grid grid-cols-1 mt-4 gap-4">
+        @livewire('users-table')
     </div>
 @endsection
 @section('js')
