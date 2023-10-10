@@ -36,7 +36,7 @@
                 </select>
             </div>
             @if ($btndelete == true)
-                <div class="grid-span-2 text-right">
+                <div class="grid-span-2 text-end">
                     <button type="button" id="selectEliminar"
                         class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium
                 rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2
@@ -49,8 +49,8 @@
         </div>
     @else
         @if ($btndelete == true)
-            <div class="grid grid-cols-1 gap-4 my-4">
-                <div class="grid-span-2 text-right">
+            <div class="grid grid-cols-1 gap-4 my-2">
+                <div class="grid-span-2 text-end">
                     <button type="button" id="selectEliminar"
                         class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium
         rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2
@@ -62,20 +62,32 @@
             </div>
         @endif
     @endif
-    <div class="grid grid-cols-1 gap-4 my-2 text-right">
+    @if ($btndelete == true)
+        <div class="grid grid-cols-1 gap-4 my-2">
+            <div class="grid-span-2 text-end">
+                <button type="button" wire:click="desmarcar"
+                    class="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none
+                focus:ring-blue-300">Desmarcar
+                    seleccionados</button>
+            </div>
+        </div>
+    @endif
+    <div class="grid grid-cols-1 gap-4 my-2 text-end">
         {{ $images->links() }}
     </div>
     <div class="grid grid-cols-3 gap-4 my-2">
-        @foreach ($images as $key=> $item)
+        @foreach ($images as $key => $item)
             <div class="grid-span-2">
-                <x-card-img key="{{$key}}" url="{{ asset($item->optimice_path) }}" alt="{{ $item->image_name }}"
-                    id="{{ $item->id }}" btnPrincipal="{{ ((int)$album_id) > 0 ? true : false }}"
-                    idPrincipal="{{ $id_principal }}" />
+                <x-card-img key="{{ $key }}"
+                    url="{{ file_exists(public_path($item->optimice_path)) && $item->optimice_path != null ? asset($item->optimice_path) : asset($item->image_path) }}"
+                    alt="{{ $item->image_name }}" id="{{ $item->id }}"
+                    btnPrincipal="{{ ((int) $album_id) > 0 ? true : false }}" idPrincipal="{{ $id_principal }}"
+                    isCheck="{{ in_array($item->id, $imagesCheck) }}" />
             </div>
         @endforeach
 
     </div>
-    <div class="grid grid-cols-1 gap-4 my-2 text-right">
+    <div class="grid grid-cols-1 gap-4 my-2 text-end">
         {{ $images->links() }}
     </div>
 

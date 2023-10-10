@@ -31,7 +31,11 @@ Route::get('/album/{idAlbum}/{nameAlbum}', [HomeController::class, 'album'])->na
 Route::get('/comprar/{idAlbum}/{idImage}', [HomeController::class, 'comprar'])->name('comprar');
 Route::get('/myaccount', [HomeController::class, 'myaccount'])->name('mi cuenta');
 Route::get('/shoppingcart', [HomeController::class, 'shoppingcart'])->name('shoppingcart')->middleware('web');
-Route::get('/exclusives', [HomeController::class, 'exclusives'])->name('exclusives');
+// Route::get('/exclusives', [HomeController::class, 'exclusives'])->name('exclusives');
+Route::get('/exclusives', function () {
+    return redirect('/');
+});
+
 Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::get('/addPhotoCookies/{idImage}/{requestWith}/{requestHeight}', [HomeController::class, 'addPhotoCookies'])->name('addPhotoCookies');
 Route::get('/updateDownUsersOnline', [HomeController::class, 'updateUsersOnline'])->name('updateUsersOnline');
@@ -42,7 +46,7 @@ Route::post('/downloadImagesArray', [HomeController::class, 'downloadImagesArray
 Route::Post('/', [HomeController::class, 'login'])->name('login');
 
 
-Route::get('/prueba/zip',[HomeController::class, 'downloadImagesArray']);
+Route::get('/prueba/zip', [HomeController::class, 'downloadImagesArray']);
 
 Route::get('/users/{id}', function ($id) {
     $user = DB::table('users')->where('id', $id)->first();
@@ -50,25 +54,23 @@ Route::get('/users/{id}', function ($id) {
 });
 
 Route::group(['prefix' => '/automatic'], function () {
-    Route::get('/optimiceImage',[ImagesController::class,'automatic_optimiceImage']);
-    Route::get('/checkImage',[ImagesController::class,'automatic_checkImage']);
-    Route::get('/checkFolder',[ImagesController::class,'automatic_check_folder']);
-    Route::get('/sync',[ImagesController::class,'automatic_sync']);
-    Route::get('/delete_image',[ImagesController::class,'automatic_delete_images']);
-    Route::get('/primary_image',[ImagesController::class,'automatic_primary_image']);
-    Route::get('/getInfoImages',[ImagesController::class,'viewImageInfo']);
+    Route::get('/optimiceImage', [ImagesController::class, 'automatic_optimiceImage']);
+    Route::get('/checkImage', [ImagesController::class, 'automatic_checkImage']);
+    Route::get('/checkFolder', [ImagesController::class, 'automatic_check_folder']);
+    Route::get('/sync', [ImagesController::class, 'automatic_sync']);
+    Route::get('/delete_image', [ImagesController::class, 'automatic_delete_images']);
+    Route::get('/primary_image', [ImagesController::class, 'automatic_primary_image']);
+    Route::get('/getInfoImages', [ImagesController::class, 'viewImageInfo']);
 });
-Route::get('/getimageInfo',[ImagesController::class,'getImageInfo']);
-Route::post('/setInfoImages',[ImagesController::class,'setImageInfo']);
+Route::get('/getimageInfo', [ImagesController::class, 'getImageInfo']);
+Route::post('/setInfoImages', [ImagesController::class, 'setImageInfo']);
 
 Route::get('/prueba_descarga', [HomeController::class, 'prueba_descarga']);
 Route::get('/sync_manual', [ImagesController::class, 'sync_manual']);
-Route::get('/phpinfo', function() {
+Route::get('/phpinfo', function () {
     return phpinfo();
 });
 
-Route::get('/prueba',function(){
+Route::get('/prueba', function () {
     return view('prueba');
 });
-
-

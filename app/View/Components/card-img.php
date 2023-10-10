@@ -17,7 +17,8 @@ class card-img extends Component
     public $btnPrincipal;
     public $idPrincipal;
     public $key;
-    public function __construct($key=null,$url,$id,$alt=null,$btnPrincipal=false ,$idPrincipal=0)
+    public $isCheck;
+    public function __construct($key=null,$url,$id,$alt=null,$btnPrincipal=false ,$idPrincipal=0 ,$isCheck=0)
     {
         $this->key=$key;
         $this->url=$url;
@@ -25,6 +26,7 @@ class card-img extends Component
         $this->id=$id;
         $this->btnPrincipal=$btnPrincipal;
         $this->idPrincipal=$idPrincipal;
+        $this->isCheck=$isCheck;
     }
 
     /**

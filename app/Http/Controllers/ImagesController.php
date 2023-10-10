@@ -433,7 +433,7 @@ class ImagesController extends Controller
             $image = DB::table('images')
                 ->where('images.optimice_path', null)
                 ->orderBy('id', 'DESC')
-                ->limit(50)
+                ->limit(25)
                 ->get();
             if ($image) {
                 foreach ($image as $item) {
@@ -442,6 +442,7 @@ class ImagesController extends Controller
                     var_dump('----' . $new . '<br>');
                 }
             }
+           
             // return response(['success' => true], 200);
         } catch (\Throwable $th) {
             return response(['error' => true], 200);

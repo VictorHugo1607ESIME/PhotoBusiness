@@ -140,8 +140,8 @@ class AlbumsController extends Controller
                     // add($id_album, $images_path, $images_url, $with, $height, $type = 'photo', $info = null)
                     $set = $this->images->add($nameImagen, $album->id, $ruta_asset, asset($ruta_asset), $dataImagen[0], $dataImagen[1], 'photo', $data);
                     if ($set > 0) {
-                        $this->images->optimice($set);
-                        $this->getInfo($set);
+                        // $this->images->optimice($set);
+                        // $this->getInfo($set);
                     }
                     $this->countImages($album->id);
                 }

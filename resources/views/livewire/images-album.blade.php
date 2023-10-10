@@ -4,8 +4,7 @@
         <p class="">{{ $album->date }} <span>Imagenes: {{ $album->number_photos }}</span></p>
     </div>
     <div class="grid grid-cols-1 mt-2">
-        <div class="font-sans" {{-- align-items: center;justify-content: center; --}}
-            style="display: flex; width: 100%;flex-wrap: wrap;gap: 4px">
+        <div class="font-sans" {{-- align-items: center;justify-content: center; --}} style="display: flex; width: 100%;flex-wrap: wrap;gap: 4px">
             @foreach ($images as $item)
                 @if ($item->image_with > $item->image_height)
                     <div class="mb-4 justify-center" style="width: 360px;">
@@ -14,7 +13,8 @@
                             onclick="comprar({{ $item->id_album }}, {{ $item->id }})"
                             onclick="selectImage({{ json_encode($item) }})">
                             <a href="{{ URL('album/' . $item->id_album . '/' . $item->album_name) }}">
-                                <img src="{{ asset($item->optimice_path) }}" alt="" loading="lazy"
+                                <img src="{{ file_exists(public_path($item->optimice_path)) && $item->optimice_path != null ? asset($item->optimice_path) : asset($item->image_path) }}"
+                                    alt="" loading="lazy"
                                     style="width: 360px; height: 240px;object-fit: scale-down;" />
                             </a>
 
@@ -32,7 +32,8 @@
                             onclick="comprar({{ $item->id_album }}, {{ $item->id }})"
                             onclick="selectImage({{ json_encode($item) }})">
                             <a href="{{ URL('album/' . $item->id_album . '/' . $item->album_name) }}">
-                                <img src="{{ asset($item->optimice_path) }}" alt="" loading="lazy"
+                                <img src="{{ file_exists(public_path($item->optimice_path)) && $item->optimice_path != null ? asset($item->optimice_path) : asset($item->image_path) }}"
+                                    alt="" loading="lazy"
                                     style="width: 180px; height: 240px;object-fit: scale-down;" />
                             </a>
                         </div>

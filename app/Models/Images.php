@@ -144,22 +144,24 @@ class Images extends Model
     {
         try {
             $imagen = DB::table('images')->where('id', $id)->first();
+            $album = DB::table('albums')->where('id', $imagen->id_album)->first();
+            $time =  strtotime(date('Y-m-d H:i:s'));
             if ($imagen && file_exists(public_path($imagen->image_path))) {
                 $image_resize = Image::make(public_path($imagen->image_path));
                 // $image_resize->encode('jpg', 30);
-                $micarpeta = public_path('/optimiceImg/');
+                $micarpeta = public_path('/optimiceImg/' . trim($album->album_slug));
                 if (!file_exists($micarpeta)) {
                     mkdir($micarpeta, 0777, true);
                 }
-                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 10, 'jpg');
+                $image_resize->save($micarpeta . '/optimice-' . $imagen->image_name, 8, 'jpg');
                 $optimice = DB::table('images')->where('id', $id)->update([
-                    'optimice_path' => '/optimiceImg/optimice-' . $imagen->image_name
+                    'optimice_path' =>  'optimiceImg/' . trim($album->album_slug) . '/optimice-' . $imagen->image_name
                 ]);
                 chmod($micarpeta . '/optimice-' . $imagen->image_name, 0777);
                 return true;
             } else {
                 $optimice = DB::table('images')->where('id', $id)->update([
-                    'optimice_path' => 1
+                    'optimice_path' => null
                 ]);
             }
             return false;

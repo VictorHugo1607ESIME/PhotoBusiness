@@ -7,8 +7,8 @@
                     {{-- <div class="texto-encima"> <span><i class="fa-regular fa-images"></i>
                             {{ $item->number_photos }}</span></div> --}}
                     <button type="button" style="height: 300px" class="justify-center text-center">
-                        <img src="{{ asset($item->optimice_path) }}" alt="" loading="lazy"
-                            style="height: 100%;object-fit: scale-down;" />
+                        <img src="{{ file_exists(public_path($item->optimice_path)) && $item->optimice_path != null ? asset($item->optimice_path) : asset($item->image_path) }}"
+                            alt="" loading="lazy" style="height: 100%;object-fit: scale-down;" />
                     </button>
                 </div>
                 <div style="width: 100%" class="mt-2 mb-4">

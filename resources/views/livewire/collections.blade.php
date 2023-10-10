@@ -7,8 +7,8 @@
                     <div class="texto-encima"> <span><i class="fa-regular fa-images"></i>
                             {{ $item->number_photos }}</span></div>
                     <a href="{{ URL('album/' . $item->album_id . '/' . $item->album_name) }}" style="max-height: 300px">
-                        <img src="{{ asset($item->optimice_path) }}" alt="" loading="lazy"
-                            style="height: auto;" />
+                        <img src="{{ file_exists(public_path($item->optimice_path)) && $item->optimice_path != null ? asset($item->optimice_path) : asset($item->image_path) }}"
+                            alt="{{ asset($item->image_path) }}" loading="lazy" style="height: auto;" />
                     </a>
                 </div>
                 <div style="width: 100%">
@@ -16,6 +16,7 @@
                         <h2
                             class="mt-2 mb-4 font-sans text-black text-center text-sm font-semibold subpixel-antialiased textCollection">
                             {{ $item->album_name }}</h2>
+
                     </a>
                 </div>
             </div>

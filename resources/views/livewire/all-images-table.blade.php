@@ -68,8 +68,9 @@
     <div class="grid grid-cols-3 gap-4 my-2">
         @foreach ($images as $item)
             <div class="grid-span-2">
-                <x-card-img url="{{ asset($item->optimice_path) }}" alt="{{ $item->image_name }}"
-                    id="{{ $item->id }}" />
+                <x-card-img
+                    url="{{ file_exists(public_path($item->optimice_path)) ? asset($item->optimice_path) : asset($item->image_path) }}"
+                    alt="{{ $item->image_name }}" id="{{ $item->id }}" />
             </div>
         @endforeach
 

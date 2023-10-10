@@ -452,6 +452,7 @@ class HomeController extends Controller
             }
             return redirect()->back();
         } catch (\Throwable $th) {
+            dd($th);
             //throw $th;
             return redirect()->back();
         }

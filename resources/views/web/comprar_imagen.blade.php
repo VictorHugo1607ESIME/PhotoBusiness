@@ -50,16 +50,16 @@
                 class="contentImage flex justify-center align-center border-solid border-2 border-gray-300 rounded-xl">
                 @if ($result['photo']->image_with > $result['photo']->image_height)
                     <img class="imgAlbumCarrito " id="mainImage" style="width: 720px; height: 480px; object-fit: scale-down; "
-                        src="{{ $result['photo']->optimice_path != null ? $result['photo']->optimice_path : $result['photo']->image_path }}"
-                        alt="">
+                        src="{{ asset($result['photo']->image_path) }}" alt="">
                 @else
                     <img class="imgAlbumCarrito " id="mainImage"
                         style="width: 720px; height: 480px; object-fit: scale-down;"
-                        src="{{ $result['photo']->optimice_path != null ? $result['photo']->optimice_path : $result['photo']->image_path }}"
-                        alt="">
+                        src="{{ asset($result['photo']->image_path) }}" alt="">
                 @endif
 
                 <div class="row contentLogo d-flex justify-content-center align-items-center">
+                    <div class="@if ($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12"
+                            src="{{ asset('images/marca-agua.png') }}" alt=""></div>
                     <div class="@if ($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12"
                             src="{{ asset('images/marca-agua.png') }}" alt=""></div>
                     <div class="@if ($result['isWideImage']) col-7 @else col-10 @endif"><img class="col-12"
@@ -118,8 +118,8 @@
                 <h2 class="text-xl font-bold">Encabezado</h2>
                 <h2 class="text-muted" id="id">ID: {{ $result['photo']->id }}</h2>
                 <h4 class="text-muted" id="date">Fecha: {{ $result['photo']->created_at }}</h4>
-                <h4 class="font-bold">Titulo:<span id="title_img">{{ $result['photo']->image_title}}</span></h4>
-                <p class="text-muted mt-5 mb-5" >
+                <h4 class="font-bold">Titulo:<span id="title_img">{{ $result['photo']->image_title }}</span></h4>
+                <p class="text-muted mt-5 mb-5">
                     @if (isset($result['photo']->image_info->ImageDescription))
                         {{ $result['photo']->image_info->ImageDescription }}
                     @else
@@ -154,10 +154,10 @@
             }
 
             function selectImage(image) {
-                Toast.fire({
-  icon: 'info',
-  title: 'Datos cargados'
-});
+                // Toast.fire({
+                //     icon: 'info',
+                //     title: 'Datos cargados'
+                // });
                 console.log(image);
                 console.log("Select Image: " + image.id)
                 image.image_info = JSON.parse(image.image_info)

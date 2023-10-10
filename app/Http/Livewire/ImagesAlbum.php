@@ -27,7 +27,7 @@ class ImagesAlbum extends Component
             ->select('images.*', 'albums.album_name')
             ->leftJoin('albums', 'albums.id', 'images.id_album')
             ->where('images.id_album', $this->idAlbum)
-            ->paginate(20);
+            ->paginate(50);
         return view('livewire.images-album', [
             'images' => $images,
             'album' => $album,

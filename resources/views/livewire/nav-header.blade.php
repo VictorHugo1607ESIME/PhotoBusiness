@@ -29,9 +29,9 @@
             <div class="col-span-1 text-center">
                 <div class="grid grid-cols-1 gap-2 text-center">
                     <div class="text-end">
-                        <button type="button"
+                        <a href="/contact"
                             class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300
-                    font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">Contacto</button>
+                    font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 ">Contacto</a>
                         @if (session('isLogin') == true)
                             <a href="{{ URL('/logout') }}"
                                 class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     @livewireStyles
@@ -12,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.6.1/css/iziModal.min.css"
         integrity="sha512-3c5WiuZUnVWCQGwVBf8XFg/4BKx48Xthd9nXi62YK0xnf39Oc2FV43lIEIdK50W+tfnw2lcVThJKmEAOoQG84Q=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="gallery/css/grid-gallery.min.css">
+    {{-- <link rel="stylesheet" href="gallery/css/grid-gallery.min.css"> --}}
     @include('layout.style')
     @yield('css')
     <title>Entrefam</title>
@@ -97,7 +98,7 @@
         integrity="sha512-lR/2z/m/AunQdfBTSR8gp9bwkrjwMq1cP0BYRIZu8zd4ycLcpRYJopB+WsBGPDjlkJUwC6VHCmuAXwwPHlacww=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="gallery/js/grid-gallery.min.js"></script>
+    {{-- <script src="gallery/js/grid-gallery.min.js"></script> --}}
     @livewireScripts
     <script>
         $("#modal_login").iziModal({
@@ -127,6 +128,26 @@
             }
         })
     </script>
+    <script>
+        window.addEventListener('success', event => {
+            Toast.fire({
+                icon: 'success',
+                title: event.detail.message != null ? event.detail.message : 'Proceso realizado.'
+            });
+        });
+        window.addEventListener('info', event => {
+            Toast.fire({
+                icon: 'info',
+                title: event.detail.message != null ? event.detail.message : 'Proceso realizado.'
+            });
+        });
+        window.addEventListener('error', event => {
+            Toast.fire({
+                icon: 'error',
+                title: event.detail.message != null ? event.detail.message : 'Proceso no realizado.'
+            });
+        });
+    </script>
     @if (session('login'))
         <script>
             Toast.fire({
@@ -151,13 +172,13 @@
             })
         });
     </script>
-    <script>
+    {{-- <script>
         gridGallery({
             selector: "#horizontal",
             layout: "square",
             columnWidth: 300
         });
-    </script>
+    </script> --}}
     @yield('js')
 </body>
 

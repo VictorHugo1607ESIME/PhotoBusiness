@@ -27,23 +27,23 @@
             <tbody>
                 @if (count($albums) > 0)
                     @foreach ($albums as $item)
-                        <tr>
-                            <td class=" py-4">
+                        <tr class="bg-white border-b">
+                            <td class=" py-3">
                                 {{ $item->id }}
                             </td>
-                            <td class=" py-4" style="max-height: 300px">
+                            <td class=" py-3" style="max-height: 300px">
                                 {{ $item->album_name }}
                             </td>
-                            <td class=" py-4">
+                            <td class=" py-3">
                                 <x-status value="{{ $item->album_status }}" />
                             </td>
-                            <td class=" py-4">
+                            <td class=" py-3">
                                 {{ $item->date }}
                             </td>
-                            <td class="py-4 text-center">
+                            <td class="py-3 text-center">
                                 <p class="font-bold"> {{ $item->number_photos }}</p>
                             </td>
-                            <td class=" py-4">
+                            <td class=" py-3">
                                 @if ($item->albums_top == 1)
                                     <button type="button"
                                         class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300
@@ -58,8 +58,8 @@
                                 @endif
 
                             </td>
-                            <td class=" py-4">
-                                <div class="grid grid-cols-3 gap-1">
+                            <td class=" py-3">
+                                <div class="flex flex-row self-center">
                                     <div class="mt-1">
                                         <a href="{{ url('admin/albums/edit', base64_encode($item->id)) }}"
                                             class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4
@@ -73,12 +73,13 @@
                                             font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"><i
                                                 class="fa-solid fa-images"></i></a>
                                     </div>
-                                    <div class="m-0 p-0">
+                                    <div class="m-0 p-0 flex self-start ">
                                         <button type="button" wire:click='deleteAlbum({{ $item->id }})'
                                             class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg
                                             text-sm px-5 py-2.5 mr-2 mb-2 "><i
                                                 class="fa-solid fa-trash"></i></button>
                                     </div>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

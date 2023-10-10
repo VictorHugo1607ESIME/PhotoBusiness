@@ -203,6 +203,7 @@
                 },
                 data: data,
                 success: function(response) {
+                    console.log(response);
                     new Promise((resolver, rechazar) => {
                             console.log('Inicial');
                             window.location.href = response.url
@@ -213,9 +214,11 @@
                                 'Buen trabajo',
                                 'Imágen descargada exitosamente',
                                 'success'
-                            )
+                            ).then(() => {
+                                location.reload();
+                            });
 
-                            location.reload();
+                            // location.reload();
                         })
                         .catch(() => {
                             Swal.fire(
@@ -223,7 +226,7 @@
                                 'Error al descargar la imágen, vuelve a intentarlo',
                                 'error'
                             ).then(() => {
-                                location.reload();
+                                // location.reload();
                             });
                         })
                     console.log(response);
@@ -234,7 +237,7 @@
                         'Error al descargar la imágen',
                         'error'
                     ).then(() => {
-                        location.reload();
+                        // location.reload();
                     });
                 },
             });

@@ -40,38 +40,74 @@ class ImagesTable extends Component
     }
 
 
+    public function  updatedImagesCheck()
+    {
+        try {
+            if (count($this->imagesCheck) == 2) {
+                arsort($this->imagesCheck);
+                if ((int)$this->imagesCheck[0] > (int)$this->imagesCheck[1]) {
+                    if (($this->imagesCheck[0] - $this->imagesCheck[1]) > 1) {
+                        $aux = ($this->imagesCheck[0] - $this->imagesCheck[1]);
+                        for ($i = 0; $i <= $aux; $i++) {
+                            $this->imagesCheck[$i] = (int)$this->imagesCheck[0] - $i;
+                        }
+                    }
+                }
+            } else {
+                $aux = $this->imagesCheck;
+                $this->imagesCheck = array();
+                foreach ($aux as $key => $value) {
+                    array_push($this->imagesCheck, (int)$value);
+                }
+            }
+        } catch (\Throwable $th) {
+            // dd($th);
+            //throw $th;
+        }
+    }
+
+
     public function render()
     {
-        if (count($this->imagesCheck) > 0) {
-            $this->btndelete = true;
-        } else {
-            $this->btndelete = false;
-        }
-        $this->albums = DB::table('albums')->where('album_status', 'A')->get();
-        if ($this->album_id > 0) {
-            $images = DB::table('images')
-                ->select('images.*')
-                ->leftJoin('albums', 'albums.id', '=', 'images.id_album')
-                ->where('images.id_album', $this->album_id)
-                ->where('images.image_status', 'A')
-                ->orderBy('images.id', 'DESC')
-                ->paginate(50);
-        } else {
-            $images = DB::table('images')
-                ->select('images.*')
-                ->leftJoin('albums', 'albums.id', '=', 'images.id_album')
-                ->orderBy('images.id', 'DESC')
-                ->where('images.image_status', 'A')
-                ->paginate(24);
-        }
-
-        if ($this->album_id > 0) {
-            $principal = DB::table('main_images')->where('album_id', $this->album_id)->first();
-            if ($principal) {
-                $this->id_principal = $principal->image_id;
+        try {
+            if (count($this->imagesCheck) > 0) {
+                $this->btndelete = true;
+            } else {
+                $this->btndelete = false;
             }
+            $this->albums = DB::table('albums')->where('album_status', 'A')->get();
+            if ($this->album_id > 0) {
+                $images = DB::table('images')
+                    ->select('images.*')
+                    ->leftJoin('albums', 'albums.id', '=', 'images.id_album')
+                    ->where('images.id_album', $this->album_id)
+                    ->where('images.image_status', 'A')
+                    ->orderBy('images.id', 'DESC')
+                    ->paginate(50);
+            } else {
+                $images = DB::table('images')
+                    ->select('images.*')
+                    ->leftJoin('albums', 'albums.id', '=', 'images.id_album')
+                    ->orderBy('images.id', 'DESC')
+                    ->where('images.image_status', 'A')
+                    ->paginate(24);
+            }
+
+            if ($this->album_id > 0) {
+                $principal = DB::table('main_images')->where('album_id', $this->album_id)->first();
+                if ($principal) {
+                    $this->id_principal = $principal->image_id;
+                }
+            }
+            return view('livewire.images-table')->with('images', $images);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
-        return view('livewire.images-table')->with('images', $images);
+    }
+
+    public function desmarcar()
+    {
+        $this->imagesCheck = array();
     }
 
     public function principal($id)
